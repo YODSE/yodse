@@ -314,7 +314,7 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
         endIcoDate  = newEndIcoDate;
     }
 
-    function () public payable
+    function () isUnderHardCap public payable
     {
         require(now > startPreIcoDate && now < endIcoDate);
         sell(msg.sender, msg.value);
