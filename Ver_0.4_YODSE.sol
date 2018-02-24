@@ -56,7 +56,6 @@ library SafeMath {
 contract Ownable {
     address public owner;
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     /**
      * @dev The Ownable constructor sets the original `owner` of the contract to the sender
      * account.
@@ -71,23 +70,13 @@ contract Ownable {
         require(msg.sender == owner);
         _;
     }
-    /**
-     * @dev Allows the current owner to transfer control of the contract to a newOwner.
-     * @param newOwner The address to transfer ownership to.
-     */
-    function transferOwnership(address newOwner) public onlyOwner {
-        require(newOwner != address(0));
-        OwnershipTransferred(owner, newOwner);
-        owner = newOwner;
-    }
 }
 
 /*********************************************************************************************************************
 * @dev see https://github.com/ethereum/EIPs/issues/20
 */
 
-contract TokenERC20 is Ownable
-{
+contract TokenERC20 is Ownable {
     using SafeMath for uint;
 
     string public name;
@@ -102,7 +91,6 @@ contract TokenERC20 is Ownable
     uint256 public constant buyPrice = 1000 szabo; //0,001 ether
 
     mapping (address => uint256) public balanceOf;
-    mapping (address => mapping (address => uint256)) public allowance;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Burn(address indexed from, uint256 value);
@@ -121,8 +109,7 @@ contract TokenERC20 is Ownable
         owner = msg.sender;
     }
 
-    function _transfer(address _from, address _to, uint256 _value) internal
-    {
+    function _transfer(address _from, address _to, uint256 _value) internal {
         require(_to != 0x0);
         require(balanceOf[_from] >= _value);
         require(balanceOf[_to] + _value > balanceOf[_to]);
@@ -133,14 +120,11 @@ contract TokenERC20 is Ownable
         assert(balanceOf[_from] + balanceOf[_to] == previousBalances);
     }
 
-    function transfer(address _to, uint256 _value) public
-    {
+    function transfer(address _to, uint256 _value) public {
         _transfer(msg.sender, _to, _value);
     }
 
-    function burn(uint256 _value) public onlyOwner
-    returns (bool success)
-    {
+    function burn(uint256 _value) public onlyOwner returns (bool success) {
         require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
         balanceOf[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
@@ -151,24 +135,10 @@ contract TokenERC20 is Ownable
 }
 
 /*********************************************************************************************************************
-* @dev Extending standart token ERC20
-*/
-
-contract ERC20Extending is TokenERC20
-{
-    function transferTokensFromContract(address _to, uint256 _value) public onlyOwner
-    {
-        avaliableSupply -= _value;
-        _value = _value*DEC;
-        _transfer(this, _to, _value);
-    }
-}
-/*********************************************************************************************************************
 ----------------------------------------------------------------------------------------------------------------------
 * @dev YodseCrowdsale contract
 */
-contract YodseCrowdsale is TokenERC20, ERC20Extending
-{
+contract YodseCrowdsale is TokenERC20 {
     using SafeMath for uint;
     // 1000 ether
     uint public constant softCapPreIco = 1000000000000000000000;
@@ -178,9 +148,6 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
     uint public constant softCapMainSale = 7000000000000000000000;
     // 40 000 ether
     uint public constant hardCapMainISale = 40000000000000000000000;
-
-    //event SaleFinished(string info);
-
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
     //address 2 ropsten testnetwork
     address public beneficiary = 0xCe66E79f59eafACaf4CaBaA317CaB4857487E3a1;
@@ -188,40 +155,28 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
     uint public endPreIcoDate = 1521417601;
     uint public startIcoDate = 1522540800;
     uint public endIcoDate = 1527811199;
-
-    uint public discount = 0;
-
+    //uint public discount = 0;
     uint public weisRaised;
-
     bool public isFinalized = false;
-
-    event Finalized();
-
-    // Supply for public token sale
-    // uint256 public constant marketSupply = 60000000*DEC; //60 000 000
     // Supply for team and developers
-    uint256 constant teamReserve = 15000000; //*DEC; // 15 000 000
+    uint256 public constant teamReserve = 15000000; //15 000 000
     // Supply for advisers, consultants and other
-    // uint256 constant consultReserve = 6000000*DEC; // 6 000 000
+    uint256 constant consultReserve = 6000000; //6 000 000
     // Supply for Reserve fond
-    // uint256 constant contingencyFund = 10000000*DEC;// 10 000 000
+    uint256 constant contingencyFund = 10000000;// 10 000 000
     // tokens for contingency fund
-    // uint256 constant marketingReserve = 5900000*DEC; //5 900 000
+    uint256 constant marketingReserve = 5900000; //5 900 000
     // tokens for testers
-    // uint256 constant testReserve = 100000*DEC; // 100 000
+    uint256 constant testReserve = 100000; // 100 000
     // tokens for bounty programs
-    // uint256 constant bountyReserve = 3000000*DEC; //3 000 000
-
-
+    uint256 constant bountyReserve = 3000000; //3 000 000
     // variable counts the number of investora after call sell function.
     uint256 public investors = 0;
 
-    function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE")
-    {
-        //uint issuedTokenSupply = totalSupply();
-        //uint teamReserveTokens = issuedTokenSupply.mul();
-        //transfer(beneficiary, teamReserve);
-    }
+    event Finalized();
+
+
+    function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
 
     modifier isUnderHardCap() {
         require(beneficiary.balance <= hardCapMainISale);
@@ -253,23 +208,18 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
         avaliableSupply -= _amount;
         _transfer(this, _investor, _amount);
         balanceOf[msg.sender] = balanceOf[msg.sender] + amount;
-
         investors +=1;
     }
 
-    function withDiscount(uint256 _amount, uint _percent) internal pure
-    returns (uint256)
-    {
+    function withDiscount(uint256 _amount, uint _percent) internal pure returns (uint256) {
         return ((_amount * _percent) / 100);
     }
-
 
     function setEndData(uint newEndIcoDate) public onlyOwner {
         endIcoDate  = newEndIcoDate;
     }
 
-    function () isUnderHardCap public payable
-    {
+    function () isUnderHardCap public payable {
         require(now > startPreIcoDate && now < endIcoDate);
         sell(msg.sender, msg.value);
         //require(now > startIcoDate && now < endIcoDate); проверка на промежуток между концом пре и началом основного
@@ -291,7 +241,6 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
         balanceOf[msg.sender] = 0;
         msg.sender.transfer(value);
     }
-
     /**
    * @dev Must be called after crowdsale ends, to do some extra finalization
    * work. Calls the contract's finalization function.
@@ -306,7 +255,6 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
         isFinalized = true;
         Burn(msg.sender, avaliableSupply);
     }
-
     /**
      * @dev Can be overridden to add finalization logic. The overriding function
      * should call super.finalization() to ensure the chain of finalization is
@@ -315,10 +263,20 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
     function finalization() internal pure {
     }
 
-    /*
-    function distributionTokens () public onlyOwner {
+    function distributionTokens(address _to, uint256 _value) public onlyOwner {
+        _to = beneficiary;
+        _value = teamReserve+consultReserve+contingencyFund+marketingReserve+testReserve+bountyReserve;
+        _value = _value*DEC;
+        avaliableSupply -= _value;
+        _transfer(this, _to, _value);
+    }
 
-         transfer();
-     }
+    /*
+    token hold
+    по разным адресам
+    modifaer tokenhold
+    require(addreqs != какой то)
+    require(now < какое то число)
+    require(value < holdBalance)
     */
 }
