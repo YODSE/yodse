@@ -95,13 +95,15 @@ contract TokenERC20 is Ownable
     uint256 public decimals = 8;
     uint256 DEC = 10 ** uint256(decimals);
     address public owner;  //0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
-
+    // all tokens
     uint256 public totalSupply;
+    // tokens for sale
     uint256 public avaliableSupply;  // totalSupply - all reserve
     uint256 public constant buyPrice = 1000 szabo; //0,001 ether
 
     mapping (address => uint256) public balanceOf;
     mapping (address => mapping (address => uint256)) public allowance;
+    //mapping(address => uint) public balances;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Burn(address indexed from, uint256 value);
@@ -141,6 +143,8 @@ contract TokenERC20 is Ownable
 
     function burn(uint256 _value) public onlyOwner
     returns (bool success)
+        // добавить модификатор прокерки softCap и при недостижении сжигать
+        // и сжигать availableSupply
     {
         require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
         balanceOf[msg.sender] -= _value;            // Subtract from the sender
@@ -176,16 +180,16 @@ contract ERC20Extending is TokenERC20
 contract YodseCrowdsale is TokenERC20, ERC20Extending
 {
     using SafeMath for uint;
-    //
-    uint public constant hardCapPreIco = 1000000000000000000000;
-    //
-    uint public constant softCapPreIco = 3000000000000000000000;
-    //
-    uint public constant hardCapMainISale = 7000000000000000000000;
-    //
-    uint public constant softCapMainSale = 40000000000000000000000;
+    // 1000 ether
+    uint public constant softCapPreIco = 1000000000000000000000;
+    // 3000 ether
+    uint public constant hardCapPreIco = 3000000000000000000000; // ?????
+    // 7000 ether
+    uint public constant softCapMainSale = 7000000000000000000000;
+    // 40 000 ether
+    uint public constant hardCapMainISale = 40000000000000000000000;
 
-    event SaleFinished(string info);
+    //event SaleFinished(string info);
 
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
     //address 2 ropsten testnetwork
@@ -194,6 +198,9 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
     uint public endPreIcoDate = 1521417601;
     uint public startIcoDate = 1522540800;
     uint public endIcoDate = 1527811199;
+
+    uint public discount = 0;
+
     //uint periodPreIco = 15;
     //uint periodIco = 61;
     uint public weisRaised;
@@ -201,7 +208,7 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
     // Supply for public token sale
     // uint256 public constant marketSupply = 60000000*DEC; //60 000 000
     // Supply for team and developers
-    // uint256 constant teamReserve = 15000000*DEC; // 15 000 000
+    uint256 constant teamReserve = 15000000; //*DEC; // 15 000 000
     // Supply for advisers, consultants and other
     // uint256 constant consultReserve = 6000000*DEC; // 6 000 000
     // Supply for Reserve fond
@@ -213,12 +220,24 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
     // tokens for bounty programs
     // uint256 constant bountyReserve = 3000000*DEC; //3 000 000
 
+
+    // variable counts the number of investora after call sell function.
+    uint256 public investors = 0;
+
     function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE")
     {
+        //uint issuedTokenSupply = totalSupply();
+        //uint teamReserveTokens = issuedTokenSupply.mul();
+        //transfer(beneficiary, teamReserve);
     }
 
-    function SaleStatus() internal constant
-    returns (string)
+    modifier isUnderHardCap() {
+        require(beneficiary.balance <= hardCapMainISale);
+        _;
+    }
+
+    /*
+     function SaleStatus() pablic returns (string)
     {
         if (now > startPreIcoDate && now < endPreIcoDate) {
             return "PreSale";
@@ -227,6 +246,10 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
         }
         return "Now currently no sale";
     }
+    */
+
+
+
 
     function sell(address _investor, uint256 amount) internal {
         uint256 _amount = amount.mul(DEC).div(buyPrice);
@@ -252,6 +275,9 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
         require(amount > avaliableSupply); // проверка что запрашиваемое количество токенов меньше чем есть на балансе
         avaliableSupply -= _amount;
         _transfer(this, _investor, _amount);
+        balanceOf[msg.sender] = balanceOf[msg.sender] + amount;
+
+        investors +=1;
     }
 
     function withDiscount(uint256 _amount, uint _percent) internal pure
@@ -259,6 +285,30 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
     {
         return ((_amount * _percent) / 100);
     }
+
+    /*
+    function discountNow (uint256 discount) internal pure{
+        if (now > startPreIcoDate && now < endPreIcoDate) {
+            discount = 30;
+            // token discount ICO (1 - 10 april 2018) 20%
+        } else if (now > startIcoDate && now < startIcoDate + 864000) { // 864000 = 10 days
+            discount = 20;
+            // token discount ICO (11 - 20 april 2018) 15%
+        } else if (now > startIcoDate + 864000 && now < startIcoDate + 1728000) {
+            discount = 15;
+            // token discount ICO (21 - 30 april 2018) 10%
+        } else if (now > startIcoDate + 1728000 && now < startIcoDate + 2592000) {
+            discount = 10;
+            // token discount ICO (1 - 10 may 2018) 5%
+        } else if (now > startIcoDate + 2592000 && now < startIcoDate + 3456000) {
+            discount = 5;
+            // token discount ICO (11 - 31 may 2018) 0%
+        } else {
+            discount = 3;
+        }
+    }
+    */
+
 
     function setEndData(uint newEndIcoDate) public onlyOwner {
         endIcoDate  = newEndIcoDate;
@@ -273,4 +323,25 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
         beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
         weisRaised = weisRaised.add(msg.value);  // добавляем получаные средства в собранное
     }
+
+    function refundPreICO() public {
+        require(weisRaised < softCapPreIco && now > endPreIcoDate);
+        uint value = balanceOf[msg.sender];
+        balanceOf[msg.sender] = 0;
+        msg.sender.transfer(value);
+    }
+
+    function refundICO() public {
+        require(weisRaised < softCapMainSale && now > endIcoDate);
+        uint value = balanceOf[msg.sender];
+        balanceOf[msg.sender] = 0;
+        msg.sender.transfer(value);
+    }
+
+    /*
+    function distributionTokens () public onlyOwner {
+
+         transfer();
+     }
+    */
 }
