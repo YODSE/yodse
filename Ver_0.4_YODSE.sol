@@ -297,12 +297,14 @@ contract YodseCrowdsale is TokenERC20, ERC20Extending
    * work. Calls the contract's finalization function.
    */
     function finalize() onlyOwner public {
-        require(!isFinalized);
+        require(!isFinalized); // нельзя вызвать второй раз (проверка что не true)
+        require(now > endIcoDate || weisRaised > softCapMainSale);
 
         finalization();
         Finalized();
 
         isFinalized = true;
+        Burn(msg.sender, avaliableSupply);
     }
 
     /**
