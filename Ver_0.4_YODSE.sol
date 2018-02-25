@@ -218,13 +218,22 @@ contract YodseCrowdsale is TokenERC20 {
     function setEndData(uint newEndIcoDate) public onlyOwner {
         endIcoDate  = newEndIcoDate;
     }
-
+    // функция для отправки эфира с контракта
+    function transferTokensFromContract(address _to, uint256 _value) public onlyOwner
+    {   
+        require(); // проверка когда можно вывести эфир
+        avaliableSupply -= _value;
+        _value = _value*DEC; 
+        _transfer(this, _to, _value);
+    }
+    
+    
     function () isUnderHardCap public payable {
         require(now > startPreIcoDate && now < endIcoDate);
         sell(msg.sender, msg.value);
         //require(now > startIcoDate && now < endIcoDate); проверка на промежуток между концом пре и началом основного
         assert(msg.value >= 1 ether / 1000); // проверка что отправляемые средства >= 0,001 ethereum
-        beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
+        //beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
         weisRaised = weisRaised.add(msg.value);  // добавляем получаные средства в собранное
     }
 
