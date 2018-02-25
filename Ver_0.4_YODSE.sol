@@ -55,7 +55,6 @@ library SafeMath {
  */
 contract Ownable {
     address public owner;
-
     /**
      * @dev The Ownable constructor sets the original `owner` of the contract to the sender
      * account.
@@ -71,11 +70,9 @@ contract Ownable {
         _;
     }
 }
-
 /*********************************************************************************************************************
 * @dev see https://github.com/ethereum/EIPs/issues/20
 */
-
 contract TokenERC20 is Ownable {
     using SafeMath for uint;
 
@@ -133,7 +130,6 @@ contract TokenERC20 is Ownable {
         return true;
     }
 }
-
 /*********************************************************************************************************************
 ----------------------------------------------------------------------------------------------------------------------
 * @dev YodseCrowdsale contract
@@ -173,10 +169,14 @@ contract YodseCrowdsale is TokenERC20 {
     // variable counts the number of investora after call sell function.
     uint256 public investors = 0;
 
+    bool distribute = true;
+
     event Finalized();
+    event setEndData(uint newEndIcoDate);
+    event withdrawEthFromContract(address indexed to, uint256 amount);
+    event distributionTokens(address indexed _to, uint256 _value);
 
-
-    function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
+function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
 
     modifier isUnderHardCap() {
         require(beneficiary.balance <= hardCapMainISale);
@@ -218,13 +218,20 @@ contract YodseCrowdsale is TokenERC20 {
     function setEndData(uint newEndIcoDate) public onlyOwner {
         endIcoDate  = newEndIcoDate;
     }
+    // функция для отправки эфира с контракта
+    function withdrawEthFromContract(address _to, uint256 amount) public onlyOwner
+    {
+        require(weisRaised >= softCapMainSale); // проверка когда можно вывести эфир
+        amount = amount * DEC;
+        _to.transfer(amount);
+    }
 
     function () isUnderHardCap public payable {
         require(now > startPreIcoDate && now < endIcoDate);
         sell(msg.sender, msg.value);
         //require(now > startIcoDate && now < endIcoDate); проверка на промежуток между концом пре и началом основного
         assert(msg.value >= 1 ether / 1000); // проверка что отправляемые средства >= 0,001 ethereum
-        beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
+        //beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
         weisRaised = weisRaised.add(msg.value);  // добавляем получаные средства в собранное
     }
 
@@ -264,13 +271,14 @@ contract YodseCrowdsale is TokenERC20 {
     }
 
     function distributionTokens(address _to, uint256 _value) public onlyOwner {
+        require(distribute = false);
         _to = beneficiary;
         _value = teamReserve+consultReserve+contingencyFund+marketingReserve+testReserve+bountyReserve;
         _value = _value*DEC;
         avaliableSupply -= _value;
         _transfer(this, _to, _value);
+        distribute = true;
     }
-
     /*
     token hold
     по разным адресам
