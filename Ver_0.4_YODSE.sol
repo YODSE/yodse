@@ -167,7 +167,7 @@ contract YodseCrowdsale is TokenERC20 {
     // tokens for bounty programs
     uint256 constant bountyReserve = 3000000; //3 000 000
     // variable counts the number of investora after call sell function.
-    uint256 public investors = 0;
+    //uint256 public investors = 0;
 
     bool distribute = false;
 
@@ -175,6 +175,11 @@ contract YodseCrowdsale is TokenERC20 {
     //event setEndData();
     //event withdrawEthFromContract(address indexed to, uint256 amount);
     //event distributionTokens(address indexed _to, uint256 _value);
+
+    mapping (address => bool) public onChain;
+    address[] public tokenHolders;  // tokenHolders.length - вернет общее количество инвесторов
+    mapping(address => uint) public balances; // храним адрес инвестора и исколь он инвестировал
+
 
     function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
 
@@ -207,7 +212,12 @@ contract YodseCrowdsale is TokenERC20 {
         require(amount > avaliableSupply); // проверка что запрашиваемое количество токенов меньше чем есть на балансе
         avaliableSupply -= _amount;
         _transfer(this, _investor, _amount);
-        investors +=1;
+        if (!onChain[msg.sender]) {
+            tokenHolders.push(msg.sender);
+            onChain[msg.sender] = true;
+        }
+
+        //investors +=1;
 
     }
 
@@ -233,22 +243,23 @@ contract YodseCrowdsale is TokenERC20 {
         assert(msg.value >= 1 ether / 1000); // проверка что отправляемые средства >= 0,001 ethereum
         //beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
         weisRaised = weisRaised.add(msg.value);  // добавляем получаные средства в собранное
+        balances[msg.sender] = balances[msg.sender].add(msg.value);
     }
 
     function refundPreICO() public {
         require(weisRaised < softCapPreIco && now > endPreIcoDate);
-        uint value = balanceOf[msg.sender];
-        balanceOf[msg.sender] = 0;
+        uint value = balances[msg.sender];  //
+        balances[msg.sender] = 0;
         msg.sender.transfer(value);  //???
-        weisRaised -= value;
+        weisRaised -= value; // проблема в газе(((
     }
 
     function refundICO() public {
         require(weisRaised < softCapMainSale && now > endIcoDate);
-        uint value = balanceOf[msg.sender];
-        balanceOf[msg.sender] = 0;
-        msg.sender.transfer(value);
-        weisRaised -= value;
+        uint value = balances[msg.sender];  //
+        balances[msg.sender] = 0;
+        msg.sender.transfer(value);  //???
+        weisRaised -= value; // проблема в газе(((
     }
     /**
    * @dev Must be called after crowdsale ends, to do some extra finalization
@@ -281,14 +292,7 @@ contract YodseCrowdsale is TokenERC20 {
         _transfer(this, _to, _value);
         distribute = true;
     }
-    /*
-    token hold
-    по разным адресам
-    modifaer tokenhold
-    require(addreqs != какой то)
-    require(now < какое то число)
-    require(value < holdBalance)
-    */
+
     address team;
     address reserve;
     address consult;
@@ -297,7 +301,14 @@ contract YodseCrowdsale is TokenERC20 {
         require(msg.sender == team || msg.sender == reserve || msg.sender == consult);
         _;
     }
-
+    /*
+        token hold
+        по разным адресам
+        modifaer tokenhold
+        require(addreqs != какой то)
+        require(now < какое то число)
+        require(value < holdBalance)
+        */
     /*
     function tokenTransferFromHolding(address _to, uint _value) public only holdersSupport {
 
