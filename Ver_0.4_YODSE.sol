@@ -155,7 +155,7 @@ contract YodseCrowdsale is TokenERC20 {
     uint public weisRaised;
     bool public isFinalized = false;
     // Supply for team and developers
-    uint256 public constant teamReserve = 15000000; //15 000 000
+    uint256 constant teamReserve = 15000000; //15 000 000
     // Supply for advisers, consultants and other
     uint256 constant consultReserve = 6000000; //6 000 000
     // Supply for Reserve fond
@@ -169,14 +169,14 @@ contract YodseCrowdsale is TokenERC20 {
     // variable counts the number of investora after call sell function.
     uint256 public investors = 0;
 
-    bool distribute = true;
+    bool distribute = false;
 
     event Finalized();
-    event setEndData(uint newEndIcoDate);
-    event withdrawEthFromContract(address indexed to, uint256 amount);
-    event distributionTokens(address indexed _to, uint256 _value);
+    //event setEndData();
+    //event withdrawEthFromContract(address indexed to, uint256 amount);
+    //event distributionTokens(address indexed _to, uint256 _value);
 
-function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
+    function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
 
     modifier isUnderHardCap() {
         require(beneficiary.balance <= hardCapMainISale);
@@ -207,8 +207,8 @@ function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales E
         require(amount > avaliableSupply); // проверка что запрашиваемое количество токенов меньше чем есть на балансе
         avaliableSupply -= _amount;
         _transfer(this, _investor, _amount);
-        balanceOf[msg.sender] = balanceOf[msg.sender] + amount;
         investors +=1;
+
     }
 
     function withDiscount(uint256 _amount, uint _percent) internal pure returns (uint256) {
@@ -239,7 +239,8 @@ function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales E
         require(weisRaised < softCapPreIco && now > endPreIcoDate);
         uint value = balanceOf[msg.sender];
         balanceOf[msg.sender] = 0;
-        msg.sender.transfer(value);
+        msg.sender.transfer(value);  //???
+        weisRaised -= value;
     }
 
     function refundICO() public {
@@ -247,6 +248,7 @@ function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales E
         uint value = balanceOf[msg.sender];
         balanceOf[msg.sender] = 0;
         msg.sender.transfer(value);
+        weisRaised -= value;
     }
     /**
    * @dev Must be called after crowdsale ends, to do some extra finalization
@@ -271,7 +273,7 @@ function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales E
     }
 
     function distributionTokens(address _to, uint256 _value) public onlyOwner {
-        require(distribute = false);
+        require(distribute = true);
         _to = beneficiary;
         _value = teamReserve+consultReserve+contingencyFund+marketingReserve+testReserve+bountyReserve;
         _value = _value*DEC;
@@ -287,4 +289,38 @@ function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales E
     require(now < какое то число)
     require(value < holdBalance)
     */
+    address team;
+    address reserve;
+    address consult;
+
+    modifier holdersSupport() {
+        require(msg.sender == team || msg.sender == reserve || msg.sender == consult);
+        _;
+    }
+
+    /*
+    function tokenTransferFromHolding(address _to, uint _value) public only holdersSupport {
+
+        if (msg.sender == team) { // то отправитель имеет право вызывать функцию
+            require(_value > teamReserve); // проверка на дату на сумму на превышение на соблюдение условий
+            _transfer(this, _to, _value); // отсылка средст на указанный кошелек в указанном количестве + плата за газ
+
+            require(now > 1577836801 || _value <= 7500000*DEC); //01/01/2020 @ 12:00am (UTC)
+
+            teamReserve -= _value;
+        }
+        else if (msg.sender == consult) {
+            require(_value > consultReserve); // проверка на дату на сумму на превышение на соблюдение условий
+            _transfer(this, _to, _value);
+            consultReserve -= _value;
+        }
+        else if (msg.sender == reserve) {
+            require(_value > contingencyFund); // проверка на дату на сумму на превышение на соблюдение условий
+            _transfer(this, _to, _value);
+            contingencyFund -= _value;
+        }
+        else revert(false);
+    }
+    */
+
 }
