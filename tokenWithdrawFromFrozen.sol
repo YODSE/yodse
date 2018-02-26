@@ -40,8 +40,7 @@ contract tokenWithdrawFromFrozen {
         else revert(false);
     }
 
-
-    function distributionTokens(address _to, uint256 _value) public onlyOwner {
+    function distributionTokens() public onlyOwner {
         require(distribute = true);
 
         //_to = beneficiary;
@@ -49,11 +48,11 @@ contract tokenWithdrawFromFrozen {
         //_value = _value*DEC;
         //avaliableSupply -= _value;
 
-        _transfer(this, beneficiary, 24500000); // frozen all
-        _transfer(this, team, 7500000); // immediately Team 1/2
-        _transfer(this, consult, 2000000); // immediately advisers 1/3
-        _transfer(this, test, 100000); // immediately testers all
-        _transfer(this, marketing, 5900000); // immediately marketing all
+        _transfer(this, beneficiary, 24500000*DEC); // frozen all
+        _transfer(this, team, 7500000*DEC); // immediately Team 1/2
+        _transfer(this, consult, 2000000*DEC); // immediately advisers 1/3
+        _transfer(this, test, 100000*DEC); // immediately testers all
+        _transfer(this, marketing, 5900000*DEC); // immediately marketing all
         // immediately 15 500 000
         avaliableSupply -= 40000000*DEC;
 
