@@ -316,6 +316,7 @@ contract YodseCrowdsale is TokenERC20 {
     }
 
     function tokenTransferFromHolding(address _from) public  holdersSupport {
+        require(now > endIcoDate);
 
         // !!! team - 7 500 000 после 1.1.2020
 
