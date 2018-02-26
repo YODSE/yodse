@@ -229,11 +229,11 @@ contract YodseCrowdsale is TokenERC20 {
         endIcoDate  = newEndIcoDate;
     }
     // функция для отправки эфира с контракта
-    function withdrawEthFromContract(address _to, uint256 amount) public onlyOwner
+    function withdrawEthFromContract(address _to) public onlyOwner
     {
         require(weisRaised >= softCapMainSale); // проверка когда можно вывести эфир
-        amount = amount * DEC;
-        _to.transfer(amount);
+        //amount = amount * DEC;
+        _to.transfer(weisRaised);
     }
 
     function () isUnderHardCap public payable {
