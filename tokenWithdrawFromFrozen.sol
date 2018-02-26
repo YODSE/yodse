@@ -58,6 +58,19 @@ contract tokenWithdrawFromFrozen {
 
         distribute = true;
     }
+
+    /*
+    old version
+    function distributionTokens(address _to, uint256 _value) public onlyOwner {
+        require(distribute = true);
+        _to = beneficiary;
+        _value = teamReserve+consultReserve+contingencyFund+marketingReserve+testReserve+bountyReserve;
+        _value = _value*DEC;
+        avaliableSupply -= _value;
+        _transfer(this, _to, _value);
+        distribute = true;
+    }
+    */
 }
     //token hold
     //по разным адресам
