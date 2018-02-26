@@ -169,6 +169,13 @@ contract YodseCrowdsale is TokenERC20 {
     // variable counts the number of investora after call sell function.
     //uint256 public investors = 0;
 
+    address team = 0x0cdb839B52404d49417C8Ded6c3E2157A06CdD37;
+    address reserve = 0x7eDE8260e573d3A3dDfc058f19309DF5a1f7397E;
+    address consult = 0x7eDE8260e573d3A3dDfc058f19309DF5a1f7397E;
+    address marketing = 0x7B97BF2df716932aaED4DfF09806D97b70C165d6;
+    address bounty = 0xADc50Ae48B4D97a140eC0f037e85e7a0B13453C4;
+    address test = 0xADc50Ae48B4D97a140eC0f037e85e7a0B13453C4;
+
     bool distribute = false;
 
     event Finalized();
@@ -283,13 +290,22 @@ contract YodseCrowdsale is TokenERC20 {
     function finalization() internal pure {
     }
 
-    function distributionTokens(address _to, uint256 _value) public onlyOwner {
+    function distributionTokens() public onlyOwner {
         require(distribute = true);
-        _to = beneficiary;
-        _value = teamReserve+consultReserve+contingencyFund+marketingReserve+testReserve+bountyReserve;
-        _value = _value*DEC;
-        avaliableSupply -= _value;
-        _transfer(this, _to, _value);
+
+        //_to = beneficiary;
+        //_value = teamReserve+consultReserve+contingencyFund+marketingReserve+testReserve+bountyReserve;
+        //_value = _value*DEC;
+        //avaliableSupply -= _value;
+
+        _transfer(this, beneficiary, 24500000*DEC); // frozen all
+        _transfer(this, team, 7500000*DEC); // immediately Team 1/2
+        _transfer(this, consult, 2000000*DEC); // immediately advisers 1/3
+        _transfer(this, test, 100000*DEC); // immediately testers all
+        _transfer(this, marketing, 5900000*DEC); // immediately marketing all
+        // immediately 15 500 000
+        avaliableSupply -= 40000000*DEC;
+
         distribute = true;
     }
 }
