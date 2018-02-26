@@ -195,6 +195,11 @@ contract YodseCrowdsale is TokenERC20 {
         _;
     }
 
+    modifier holdersSupport() { //чьи заморож токены остались (team, consult, reserve, bounty)
+        require(msg.sender == team || msg.sender == reserve || msg.sender == consult ||  msg.sender == bounty );
+        _;
+    }
+
     function sell(address _investor, uint256 amount) internal {
         uint256 _amount = amount.mul(DEC).div(buyPrice);
         // token discount PreIco (5 - 19 mart 2018) 30%
@@ -235,6 +240,7 @@ contract YodseCrowdsale is TokenERC20 {
     function setEndData(uint newEndIcoDate) public onlyOwner {
         endIcoDate  = newEndIcoDate;
     }
+
     // функция для отправки эфира с контракта
     function withdrawEthFromContract(address _to) public onlyOwner
     {
@@ -306,6 +312,43 @@ contract YodseCrowdsale is TokenERC20 {
         // immediately 15 500 000
         avaliableSupply -= 40000000*DEC;
 
-        distribute = true;
+        //distribute = true;
     }
+
+    function tokenTransferFromHolding(address _from) public only holdersSupport {
+
+        // !!! team - 7 500 000 после 1.1.2020
+
+        // !!! consult - 2 000 000 после 1.9.2018 и 2 000 000 после 1.1.2019
+
+        // !!! reserve - 10 000 000 после 1.1.2019
+
+        // bounty - 1 500 000 после endIcoDate + 2592000 (30 дней) и 1 500 000 после endIcoDate + 5184000 (30 дней)
+
+        if (msg.sender == reserve && now > 1546300801) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
+            _transfer(beneficiary, reserve, 10000000*DEC);
+            balanceOf[_from] -= 10000000*DEC;
+        }
+        else if (msg.sender == team && now > 1577836801) { // 1577836801 - 01/01/2020 @ 12:00am (UTC)
+            _transfer(beneficiary, team, 75000000*DEC);
+            balanceOf[_from] -= 75000000*DEC;
+        }
+        else if (msg.sender == consult && now > 1535760001) { // 1535760001 - 09/01/2018 @ 12:00am (UTC)
+            _transfer(beneficiary, consult, 2000000*DEC);
+            balanceOf[_from] -= 75000000*DEC;
+        }
+        else if (msg.sender == consult && now > 1546300801) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
+            _transfer(beneficiary, consult, 2000000*DEC);
+            balanceOf[_from] -= 75000000*DEC;
+        }
+        else if (msg.sender == bounty && now > endIcoDate + 2592000) { // 1535760001 - 09/01/2018 @ 12:00am (UTC)
+            _transfer(beneficiary, consult, 1500000*DEC);
+            balanceOf[_from] -= 1500000*DEC;
+        }
+        else if (msg.sender == bounty && now > endIcoDate + 5184000) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
+            _transfer(beneficiary, consult, 1500000*DEC);
+            balanceOf[_from] -= 1500000*DEC;
+        }
+    }
+
 }
