@@ -292,46 +292,4 @@ contract YodseCrowdsale is TokenERC20 {
         _transfer(this, _to, _value);
         distribute = true;
     }
-
-    address team;
-    address reserve;
-    address consult;
-
-    modifier holdersSupport() {
-        require(msg.sender == team || msg.sender == reserve || msg.sender == consult);
-        _;
-    }
-    /*
-        token hold
-        по разным адресам
-        modifaer tokenhold
-        require(addreqs != какой то)
-        require(now < какое то число)
-        require(value < holdBalance)
-        */
-    /*
-    function tokenTransferFromHolding(address _to, uint _value) public only holdersSupport {
-
-        if (msg.sender == team) { // то отправитель имеет право вызывать функцию
-            require(_value > teamReserve); // проверка на дату на сумму на превышение на соблюдение условий
-            _transfer(this, _to, _value); // отсылка средст на указанный кошелек в указанном количестве + плата за газ
-
-            require(now > 1577836801 || _value <= 7500000*DEC); //01/01/2020 @ 12:00am (UTC)
-
-            teamReserve -= _value;
-        }
-        else if (msg.sender == consult) {
-            require(_value > consultReserve); // проверка на дату на сумму на превышение на соблюдение условий
-            _transfer(this, _to, _value);
-            consultReserve -= _value;
-        }
-        else if (msg.sender == reserve) {
-            require(_value > contingencyFund); // проверка на дату на сумму на превышение на соблюдение условий
-            _transfer(this, _to, _value);
-            contingencyFund -= _value;
-        }
-        else revert(false);
-    }
-    */
-
 }
