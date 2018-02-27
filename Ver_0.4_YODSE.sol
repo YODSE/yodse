@@ -137,23 +137,19 @@ contract TokenERC20 is Ownable {
 contract YodseCrowdsale is TokenERC20 {
     using SafeMath for uint;
     // 1000 ether
-    uint public constant softCapPreIco = 1000000000000000000; // 1 eth
+    uint public constant softCapPreIco = 1000000000000000000000;
     // 3000 ether
-    uint public constant hardCapPreIco = 3000000000000000000; // 3 eth
+    uint public constant hardCapPreIco = 3000000000000000000000;
     // 7000 ether
-    uint public constant softCapMainSale = 4000000000000000000; //4 eth
+    uint public constant softCapMainSale = 7000000000000000000000;
     // 40 000 ether
-    uint public constant hardCapMainISale = 6000000000000000000; // 6 eth
+    uint public constant hardCapMainISale = 40000000000000000000000;
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
-    //address 2 ropsten testnetwork
-    address public beneficiary = 0xCe66E79f59eafACaf4CaBaA317CaB4857487E3a1;
-    uint public startPreIcoDate = 1519717934; // 02/27/2018 @ 7:52am (UTC)
-    uint public endPreIcoDate = 1519720200; // 02/27/2018 @ 8:30am (UTC)
-    uint public startIcoDate = 1519720900; // 02/27/2018 @ 8:41am (UTC)
-    uint public endIcoDate = 1519721500; // 02/27/2018 @ 8:51am (UTC)
-    //uint public discount = 0;
-    uint public weisRaised;
-    bool public isFinalized = false;
+    address public beneficiary = 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95;
+    uint public startPreIcoDate = 1520208001; // Monday, 05-Mar-18 00:00:01 UTC
+    uint public endPreIcoDate = 1521503999; // Monday, 19-Mar-18 23:59:59 UTC
+    uint public startIcoDate = 1522281601; // Thursday, 29-Mar-18 00:00:01 UTC
+    uint public endIcoDate = 1527811199; // Thursday, 31-May-18 23:59:59 UTC
     // Supply for team and developers
     uint256 constant teamReserve = 15000000; //15 000 000
     // Supply for advisers, consultants and other
@@ -169,19 +165,19 @@ contract YodseCrowdsale is TokenERC20 {
     // variable counts the number of investora after call sell function.
     //uint256 public investors = 0;
 
-    address team = 0x2Ab1dF22ef514ab94518862082E653457A5c1aFc;
-    address reserve = 0x7eDE8260e573d3A3dDfc058f19309DF5a1f7397E;
-    address consult = 0x7c64258824cf4058AACe9490823974bdEA5f366e;
-    address marketing = 0x7B97BF2df716932aaED4DfF09806D97b70C165d6;
-    address bounty = 0xADc50Ae48B4D97a140eC0f037e85e7a0B13453C4;
-    address test = 0x253579153746cD2D09C89e73810E369ac6F16115;
+    address team = 0x2Ab1dF22ef514ab94518862082E653457A5c1aFc; //  !!!! TEST ADDRESS
+    address reserve = 0x7eDE8260e573d3A3dDfc058f19309DF5a1f7397E; //  !!!! TEST ADDRESS//
+    address consult = 0x7c64258824cf4058AACe9490823974bdEA5f366e; //  !!!! TEST ADDRESS//
+    address marketing = 0x7B97BF2df716932aaED4DfF09806D97b70C165d6; //  !!!! TEST ADDRESS//
+    address bounty = 0xADc50Ae48B4D97a140eC0f037e85e7a0B13453C4; //  !!!! TEST ADDRESS//
+    address test = 0x253579153746cD2D09C89e73810E369ac6F16115; //  !!!! TEST ADDRESS//
 
     bool distribute = false;
+    bool transferFrozen = false;
+    uint public weisRaised;
+    bool public isFinalized = false;
 
     event Finalized();
-    //event setEndData();
-    //event withdrawEthFromContract(address indexed to, uint256 amount);
-    //event distributionTokens(address indexed _to, uint256 _value);
 
     mapping (address => bool) public onChain;
     address[] public tokenHolders;  // tokenHolders.length - вернет общее количество инвесторов
@@ -202,24 +198,34 @@ contract YodseCrowdsale is TokenERC20 {
 
     function sell(address _investor, uint256 amount) internal {
         uint256 _amount = amount.mul(DEC).div(buyPrice);
+
         // token discount PreIco (5 - 19 mart 2018) 30%
         if (now > startPreIcoDate && now < endPreIcoDate) {
             _amount = _amount.add(withDiscount(_amount, 30));
+
             // token discount ICO (1 - 10 april 2018) 20%
         } else if (now > startIcoDate && now < startIcoDate + 864000) { // 864000 = 10 days
             _amount = _amount.add(withDiscount(_amount, 20));
+
             // token discount ICO (11 - 20 april 2018) 15%
         } else if (now > startIcoDate + 864000 && now < startIcoDate + 1728000) {
             _amount = _amount.add(withDiscount(_amount, 15));
+
             // token discount ICO (21 - 30 april 2018) 10%
         } else if (now > startIcoDate + 1728000 && now < startIcoDate + 2592000) {
             _amount = _amount.add(withDiscount(_amount, 10));
+
             // token discount ICO (1 - 10 may 2018) 5%
         } else if (now > startIcoDate + 2592000 && now < startIcoDate + 3456000) {
             _amount = _amount.add(withDiscount(_amount, 5));
+
+            // token discount ICO (11 - 31 may 2018) 3%
+        } else if (now > startIcoDate + 3456001 && now < endIcoDate) {
+            _amount = _amount.add(withDiscount(_amount, 3));
+
             // token discount ICO (11 - 31 may 2018) 0%
         } else {
-            _amount = _amount.add(withDiscount(_amount, 3));
+            _amount = _amount.add(withDiscount(_amount, 0));
         }
         require(amount > avaliableSupply); // проверка что запрашиваемое количество токенов меньше чем есть на балансе
         avaliableSupply -= _amount;
@@ -228,8 +234,6 @@ contract YodseCrowdsale is TokenERC20 {
             tokenHolders.push(msg.sender);
             onChain[msg.sender] = true;
         }
-
-        //investors +=1;
 
     }
 
@@ -245,14 +249,12 @@ contract YodseCrowdsale is TokenERC20 {
     function withdrawEthFromContract(address _to) public onlyOwner
     {
         require(weisRaised >= softCapMainSale); // проверка когда можно вывести эфир
-        //amount = amount * DEC;
         _to.transfer(weisRaised);
     }
 
     function () isUnderHardCap public payable {
         require(now > startPreIcoDate && now < endIcoDate);
         sell(msg.sender, msg.value);
-        //require(now > startIcoDate && now < endIcoDate); проверка на промежуток между концом пре и началом основного
         assert(msg.value >= 1 ether / 1000); // проверка что отправляемые средства >= 0,001 ethereum
         //beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
         weisRaised = weisRaised.add(msg.value);  // добавляем получаные средства в собранное
@@ -263,16 +265,16 @@ contract YodseCrowdsale is TokenERC20 {
         require(weisRaised < softCapPreIco && now > endPreIcoDate);
         uint value = balances[msg.sender];  //
         balances[msg.sender] = 0;
-        msg.sender.transfer(value);  //???
-        weisRaised -= value; // проблема в газе(((
+        msg.sender.transfer(value);
+        weisRaised -= value;
     }
 
     function refundICO() public {
         require(weisRaised < softCapMainSale && now > endIcoDate);
         uint value = balances[msg.sender];  //
         balances[msg.sender] = 0;
-        msg.sender.transfer(value);  //???
-        weisRaised -= value; // проблема в газе(((
+        msg.sender.transfer(value);
+        weisRaised -= value;
     }
     /**
    * @dev Must be called after crowdsale ends, to do some extra finalization
@@ -297,25 +299,20 @@ contract YodseCrowdsale is TokenERC20 {
     }
 
     function distributionTokens() public onlyOwner {
-        require(distribute = true);
-
-        //_to = beneficiary;
-        //_value = teamReserve+consultReserve+contingencyFund+marketingReserve+testReserve+bountyReserve;
-        //_value = _value*DEC;
-        //avaliableSupply -= _value;
+        require(!distribute);
 
         _transfer(this, beneficiary, 24500000*DEC); // frozen all
         _transfer(this, team, 7500000*DEC); // immediately Team 1/2
         _transfer(this, consult, 2000000*DEC); // immediately advisers 1/3
         _transfer(this, test, 100000*DEC); // immediately testers all
         _transfer(this, marketing, 5900000*DEC); // immediately marketing all
-        // immediately 15 500 000
         avaliableSupply -= 40000000*DEC;
 
-        //distribute = true;
+        distribute = true;
     }
 
-    function tokenTransferFromHolding(address _from) public  holdersSupport {
+    function tokenTransferFromHolding(address) public  holdersSupport {
+        require(!transferFrozen);
         require(now > endIcoDate);
 
         // !!! team - 7 500 000 после 1.1.2020
@@ -328,28 +325,27 @@ contract YodseCrowdsale is TokenERC20 {
 
         if (msg.sender == reserve && now > 1546300801) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
             _transfer(beneficiary, reserve, 10000000*DEC);
-            balanceOf[_from] -= 10000000*DEC;
+            balanceOf[beneficiary] -= 10000000*DEC;
         }
         else if (msg.sender == team && now > 1577836801) { // 1577836801 - 01/01/2020 @ 12:00am (UTC)
             _transfer(beneficiary, team, 75000000*DEC);
-            balanceOf[_from] -= 75000000*DEC;
+            balanceOf[beneficiary] -= 75000000*DEC;
         }
         else if (msg.sender == consult && now > 1535760001) { // 1535760001 - 09/01/2018 @ 12:00am (UTC)
             _transfer(beneficiary, consult, 2000000*DEC);
-            balanceOf[_from] -= 75000000*DEC;
+            balanceOf[beneficiary] -= 75000000*DEC;
         }
         else if (msg.sender == consult && now > 1546300801) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
             _transfer(beneficiary, consult, 2000000*DEC);
-            balanceOf[_from] -= 75000000*DEC;
+            balanceOf[beneficiary] -= 75000000*DEC;
         }
         else if (msg.sender == bounty && now > endIcoDate + 2592000) { // 1535760001 - 09/01/2018 @ 12:00am (UTC)
             _transfer(beneficiary, consult, 1500000*DEC);
-            balanceOf[_from] -= 1500000*DEC;
+            balanceOf[beneficiary] -= 1500000*DEC;
         }
         else if (msg.sender == bounty && now > endIcoDate + 5184000) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
             _transfer(beneficiary, consult, 1500000*DEC);
-            balanceOf[_from] -= 1500000*DEC;
+            balanceOf[beneficiary] -= 1500000*DEC;
         }
     }
-
 }
