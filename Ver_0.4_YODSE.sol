@@ -137,20 +137,20 @@ contract TokenERC20 is Ownable {
 contract YodseCrowdsale is TokenERC20 {
     using SafeMath for uint;
     // 1000 ether
-    uint public constant softCapPreIco = 1000000000000000000000;
+    uint public constant softCapPreIco = 1000000000000000000; // 1 eth
     // 3000 ether
-    uint public constant hardCapPreIco = 3000000000000000000000; // ?????
+    uint public constant hardCapPreIco = 3000000000000000000; // 3 eth
     // 7000 ether
-    uint public constant softCapMainSale = 7000000000000000000000;
+    uint public constant softCapMainSale = 4000000000000000000; //4 eth
     // 40 000 ether
-    uint public constant hardCapMainISale = 40000000000000000000000;
+    uint public constant hardCapMainISale = 6000000000000000000; // 6 eth
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
     //address 2 ropsten testnetwork
     address public beneficiary = 0xCe66E79f59eafACaf4CaBaA317CaB4857487E3a1;
-    uint public startPreIcoDate = 1519453359; // 1520208001
-    uint public endPreIcoDate = 1521417601;
-    uint public startIcoDate = 1522540800;
-    uint public endIcoDate = 1527811199;
+    uint public startPreIcoDate = 1519717934; // 02/27/2018 @ 7:52am (UTC)
+    uint public endPreIcoDate = 1519720200; // 02/27/2018 @ 8:30am (UTC)
+    uint public startIcoDate = 1519720900; // 02/27/2018 @ 8:41am (UTC)
+    uint public endIcoDate = 1519721500; // 02/27/2018 @ 8:51am (UTC)
     //uint public discount = 0;
     uint public weisRaised;
     bool public isFinalized = false;
@@ -169,12 +169,12 @@ contract YodseCrowdsale is TokenERC20 {
     // variable counts the number of investora after call sell function.
     //uint256 public investors = 0;
 
-    address team = 0x0cdb839B52404d49417C8Ded6c3E2157A06CdD37;
+    address team = 0x2Ab1dF22ef514ab94518862082E653457A5c1aFc;
     address reserve = 0x7eDE8260e573d3A3dDfc058f19309DF5a1f7397E;
-    address consult = 0x7eDE8260e573d3A3dDfc058f19309DF5a1f7397E;
+    address consult = 0x7c64258824cf4058AACe9490823974bdEA5f366e;
     address marketing = 0x7B97BF2df716932aaED4DfF09806D97b70C165d6;
     address bounty = 0xADc50Ae48B4D97a140eC0f037e85e7a0B13453C4;
-    address test = 0xADc50Ae48B4D97a140eC0f037e85e7a0B13453C4;
+    address test = 0x253579153746cD2D09C89e73810E369ac6F16115;
 
     bool distribute = false;
 
