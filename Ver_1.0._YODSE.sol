@@ -314,14 +314,14 @@ contract YodseCrowdsale is TokenERC20 {
         //tokenFrozenTeam[team] += 7500000*DEC; // кладем в меппинг первые токены
 
         _transfer(this, consult, 2000000*DEC); // immediately advisers 1/3
-        tokenFrozenConsult[consult] = tokenFrozenConsult[consult].add(2000000*DEC);
+        tokenFrozenConsult[consult] = tokenFrozenConsult[consult].add(4000000*DEC); // в меппинг кладем 6 000 000 - 4 000 000
 
         _transfer(this, test, 100000*DEC); // immediately testers all
 
         _transfer(this, marketing, 5900000*DEC); // immediately marketing all
 
         tokenFrozenReserve[reserve] = tokenFrozenReserve[reserve].add(10000000*DEC);  // immediately reserve all
-        tokenFrozenBounty[bounty] = tokenFrozenBounty[bounty].add(3000000*DEC); // immediately bounty all
+        tokenFrozenBounty[bounty] = tokenFrozenBounty[bounty].add(3000000*DEC); // immediately bounty all frozen
 
         avaliableSupply -= 40000000*DEC;
         distribute = true;
@@ -332,44 +332,55 @@ contract YodseCrowdsale is TokenERC20 {
     function tokenTransferFromHolding(address) public  holdersSupport {
         //require(!transferFrozen);
         require(now > endIcoDate);
-        
+
 
         // !!! reserve - 10 000 000 после 1.1.2019
         if (msg.sender == reserve && now > 1546300801) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
+            require(tokenFrozenReserve[reserve] == 10000000*DEC);  // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
             //require(tokenFrozenReserve[reserve] == 7500000*DEC;);
             _transfer(beneficiary, reserve, 10000000*DEC);
-            balanceOf[beneficiary] -= 10000000*DEC;
-            tokenFrozenReserve[reserve] += 10000000*DEC;
+            balanceOf[beneficiary] = balanceOf[beneficiary].sub(10000000*DEC); // списали с бенефициара
+            tokenFrozenReserve[reserve] = tokenFrozenReserve[reserve].sub(10000000*DEC); // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
         }
 
         // !!! team - 7 500 000 после 1.1.2020
         else if (msg.sender == team /* */ && now > 1577836801) { // 1577836801 - 01/01/2020 @ 12:00am (UTC)
-            require(tokenFrozenTeam[team] != 7500000*DEC);  // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
+            require(tokenFrozenTeam[team] == 7500000*DEC);  // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
             //tokenFrozenTeam[team] == 0;
             _transfer(beneficiary, team, 7500000*DEC); // перевели еще токены
             balanceOf[beneficiary] = balanceOf[beneficiary].sub(7500000*DEC); // списали с бенефициара
             tokenFrozenTeam[team] = tokenFrozenTeam[team].sub(7500000*DEC); // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
         }
 
-        // !!! consult - 2 000 000 после 1.9.2018 и 2 000 000 после 1.1.2019
+        // !!! consult - 2 000 000 после 1.9.2018
         else if (msg.sender == consult && now > 1535760001) { // 1535760001 - 09/01/2018 @ 12:00am (UTC)
-            require(tokenFrozenConsult[team] == 7500000*DEC); // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
+            require(tokenFrozenConsult[consult] == 4000000*DEC); // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
             _transfer(beneficiary, consult, 2000000*DEC);
-            balanceOf[beneficiary] -= 2000000*DEC;
-            tokenFrozenConsult[team] -= 2000000*DEC; // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
+            balanceOf[beneficiary] = balanceOf[beneficiary].sub(2000000*DEC); // списали с бенефициара
+            tokenFrozenConsult[consult] = tokenFrozenConsult[consult].sub(2000000*DEC); // списали с мепинга и уменьшили его до 2 000 000 чтобы прошел следующую проверку после  1.1.2019
         }
+        // и 2 000 000 после 1.1.2019
         else if (msg.sender == consult && now > 1546300801) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
+            require(tokenFrozenConsult[consult] == 2000000*DEC); // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
             _transfer(beneficiary, consult, 2000000*DEC);
-            balanceOf[beneficiary] -= 2000000*DEC;
+            balanceOf[beneficiary] = balanceOf[beneficiary].sub(2000000*DEC); // списали с бенефициара
+            tokenFrozenConsult[consult] = 0; // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
         }
-        // bounty - 1 500 000 после endIcoDate + 2592000 (30 дней) и 1 500 000 после endIcoDate + 5184000 (30 дней)
+
+        // bounty - 1 500 000 после endIcoDate + 2592000 (30 дней)
         else if (msg.sender == bounty && now > endIcoDate + 2592000) { // 1535760001 - 09/01/2018 @ 12:00am (UTC)
-            _transfer(beneficiary, consult, 1500000*DEC);
-            balanceOf[beneficiary] -= 1500000*DEC;
+            require(tokenFrozenBounty[bounty] == 3000000*DEC); // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
+            _transfer(beneficiary, bounty, 1500000*DEC);
+            balanceOf[beneficiary] = balanceOf[beneficiary].sub(1500000*DEC); // списали с бенефициара
+            tokenFrozenBounty[bounty] = tokenFrozenBounty[bounty].sub(1500000*DEC); // списали с мепинга и уменьшили его до 1 500 000 чтобы прошел следующую проверку после  1.1.2019
         }
+
+        // и 1 500 000 после endIcoDate + 5184000 (30 дней)
         else if (msg.sender == bounty && now > endIcoDate + 5184000) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
-            _transfer(beneficiary, consult, 1500000*DEC);
-            balanceOf[beneficiary] -= 1500000*DEC;
+            require(tokenFrozenBounty[bounty] == 1500000*DEC); // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
+            _transfer(beneficiary, bounty, 1500000*DEC);
+            balanceOf[beneficiary] = balanceOf[beneficiary].sub(1500000*DEC); // списали с бенефициара
+            tokenFrozenBounty[bounty] = 0; // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
         }
     }
 }
