@@ -309,6 +309,7 @@ contract YodseCrowdsale is TokenERC20 {
 
         _transfer(this, beneficiary, 24500000*DEC); // frozen all
         _transfer(this, team, 7500000*DEC); // immediately Team 1/2
+        tokenFrozenTeam[reserve] += 7500000*DEC; // кладем в меппинг первые токены
         _transfer(this, consult, 2000000*DEC); // immediately advisers 1/3
         _transfer(this, test, 100000*DEC); // immediately testers all
         _transfer(this, marketing, 5900000*DEC); // immediately marketing all
@@ -329,13 +330,21 @@ contract YodseCrowdsale is TokenERC20 {
         // bounty - 1 500 000 после endIcoDate + 2592000 (30 дней) и 1 500 000 после endIcoDate + 5184000 (30 дней)
 
         if (msg.sender == reserve && now > 1546300801) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
+            //require(tokenFrozenReserve[reserve] == 7500000*DEC;);
             _transfer(beneficiary, reserve, 10000000*DEC);
             balanceOf[beneficiary] -= 10000000*DEC;
+            tokenFrozenReserve[reserve] += 10000000*DEC;
         }
+
+
         else if (msg.sender == team && now > 1577836801) { // 1577836801 - 01/01/2020 @ 12:00am (UTC)
-            _transfer(beneficiary, team, 75000000*DEC);
-            balanceOf[beneficiary] -= 75000000*DEC;
+            require(tokenFrozenReserve[reserve] == 7500000*DEC); // не может быть меньше так как если они выведут токены - на меппинг это не отразится
+            //tokenFrozenTeam[reserve] == 0;
+            _transfer(beneficiary, team, 75000000*DEC); // перевели еще токены
+            balanceOf[beneficiary] -= 75000000*DEC; // списали с бенефициара
+            tokenFrozenReserve[reserve] -= 15000000*DEC; // списали с мепинга и сделали его == 0
         }
+
         else if (msg.sender == consult && now > 1535760001) { // 1535760001 - 09/01/2018 @ 12:00am (UTC)
             _transfer(beneficiary, consult, 2000000*DEC);
             balanceOf[beneficiary] -= 75000000*DEC;
