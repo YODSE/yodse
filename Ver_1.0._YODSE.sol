@@ -182,7 +182,10 @@ contract YodseCrowdsale is TokenERC20 {
     mapping (address => bool) public onChain;
     address[] public tokenHolders;  // tokenHolders.length - вернет общее количество инвесторов
     mapping(address => uint) public balances; // храним адрес инвестора и исколь он инвестировал
-    mapping(address => uint) public tokenFrozenTeam; // храним адрес инвестора и исколь он инвестировал
+    mapping(address => uint) tokenFrozenTeam; // храним адрес разработчиков
+    mapping(address => uint) tokenFrozenReserve; // храним адрес резервного фонда
+    mapping(address => uint) tokenFrozenConsult; // храним адрес Консультантов
+    mapping(address => uint) tokenFrozenBounty; // храним адрес Баунти
 
     function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
 
@@ -310,7 +313,6 @@ contract YodseCrowdsale is TokenERC20 {
         _transfer(this, test, 100000*DEC); // immediately testers all
         _transfer(this, marketing, 5900000*DEC); // immediately marketing all
         avaliableSupply -= 40000000*DEC;
-
         distribute = true;
     }
     // функция выдачи замороженных токенов членам команды
