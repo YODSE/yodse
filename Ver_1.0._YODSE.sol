@@ -340,7 +340,7 @@ contract YodseCrowdsale is TokenERC20 {
             //require(tokenFrozenReserve[reserve] == 7500000*DEC;);
             _transfer(beneficiary, reserve, 10000000*DEC);
             balanceOf[beneficiary] = balanceOf[beneficiary].sub(10000000*DEC); // списали с бенефициара
-            tokenFrozenReserve[reserve] = tokenFrozenReserve[reserve].sub(10000000*DEC); // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
+            tokenFrozenReserve[reserve] = 0; // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
         }
 
         // !!! team - 7 500 000 после 1.1.2020
@@ -349,7 +349,7 @@ contract YodseCrowdsale is TokenERC20 {
             //tokenFrozenTeam[team] == 0;
             _transfer(beneficiary, team, 7500000*DEC); // перевели еще токены
             balanceOf[beneficiary] = balanceOf[beneficiary].sub(7500000*DEC); // списали с бенефициара
-            tokenFrozenTeam[team] = tokenFrozenTeam[team].sub(7500000*DEC); // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
+            tokenFrozenTeam[team] = 0; // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
         }
 
         // !!! consult - 2 000 000 после 1.9.2018
