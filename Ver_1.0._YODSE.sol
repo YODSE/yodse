@@ -173,7 +173,7 @@ contract YodseCrowdsale is TokenERC20 {
     address test = 0x253579153746cD2D09C89e73810E369ac6F16115; //  !!!! TEST ADDRESS//
 
     bool distribute = false;
-    bool transferFrozen = false;
+    //bool transferFrozen = false;
     uint public weisRaised;
     bool public isFinalized = false;
 
@@ -182,7 +182,7 @@ contract YodseCrowdsale is TokenERC20 {
     mapping (address => bool) public onChain;
     address[] public tokenHolders;  // tokenHolders.length - вернет общее количество инвесторов
     mapping(address => uint) public balances; // храним адрес инвестора и исколь он инвестировал
-
+    mapping(address => uint) public tokenFrozenTeam; // храним адрес инвестора и исколь он инвестировал
 
     function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
 
@@ -234,13 +234,12 @@ contract YodseCrowdsale is TokenERC20 {
             tokenHolders.push(msg.sender);
             onChain[msg.sender] = true;
         }
-
     }
 
     function withDiscount(uint256 _amount, uint _percent) internal pure returns (uint256) {
         return ((_amount * _percent) / 100);
     }
-
+    // функция изменения даты окончания ICO собственником контракта
     function setEndData(uint newEndIcoDate) public onlyOwner {
         endIcoDate  = newEndIcoDate;
     }
@@ -251,16 +250,20 @@ contract YodseCrowdsale is TokenERC20 {
         require(weisRaised >= softCapMainSale); // проверка когда можно вывести эфир
         _to.transfer(weisRaised);
     }
-
+    // функция payable для отправки эфира на адрес
     function () isUnderHardCap public payable {
         require(now > startPreIcoDate && now < endIcoDate);
         sell(msg.sender, msg.value);
-        assert(msg.value >= 1 ether / 1000); // проверка что отправляемые средства >= 0,001 ethereum
+        // проверка что отправляемые средства >= 0,001 ethereum
+        assert(msg.value >= 1 ether / 1000);
         //beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
-        weisRaised = weisRaised.add(msg.value);  // добавляем получаные средства в собранное
+        // добавляем получаные средства в собранное
+        weisRaised = weisRaised.add(msg.value);
+        // добавляем в адрес инвестора количество инвестированных эфиров
         balances[msg.sender] = balances[msg.sender].add(msg.value);
     }
 
+    // функция возврата средств инвесторам при недостижении SoftCapPreICO
     function refundPreICO() public {
         require(weisRaised < softCapPreIco && now > endPreIcoDate);
         uint value = balances[msg.sender];  //
@@ -268,7 +271,7 @@ contract YodseCrowdsale is TokenERC20 {
         msg.sender.transfer(value);
         weisRaised -= value;
     }
-
+    // функция возврата средств инвесторам при недостижении SoftCapICO
     function refundICO() public {
         require(weisRaised < softCapMainSale && now > endIcoDate);
         uint value = balances[msg.sender];  //
@@ -310,9 +313,9 @@ contract YodseCrowdsale is TokenERC20 {
 
         distribute = true;
     }
-
+    // функция выдачи замороженных токенов членам команды
     function tokenTransferFromHolding(address) public  holdersSupport {
-        require(!transferFrozen);
+        //require(!transferFrozen);
         require(now > endIcoDate);
 
         // !!! team - 7 500 000 после 1.1.2020
