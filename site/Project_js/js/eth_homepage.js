@@ -1,3 +1,5 @@
+import './TemplateVar.js';
+
 var MAINET_RPC_URL='https://mainnet.infura.io/metamask';
 var ROPSTEN_RPC_URL='https://ropsten.infura.io/metamask';
 var KOVAN_RPC_URL='https://kovan.infura.io/metamask';
@@ -10,9 +12,9 @@ $(document).ready(function()
     web3=new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/VErbwOgRsS5RyJHEThON'));
     //web3=new Web3(new Web3.providers.HttpProvider(CURRENT_URL));
 
-    var address = "0x4c322906982842D71E4Ffc6Fb707EBF250Fa0C48";
+    contractAddress = "0x4c322906982842D71E4Ffc6Fb707EBF250Fa0C48";
 
-    var abi=([
+    ABIArray=([
     {
         "constant": true,
         "inputs": [],
@@ -517,6 +519,17 @@ $(document).ready(function()
 // речи о калькуляторе не было
 
      //  - сколько собрано эфира
+    contractYODSE = web3.eth.contract(ABIArray).at(contractAddress);
+
+    set("Investors",contractYODSE.tokenHolders());
+    set("price",web3.fromWei(contractYODSE.buyPrice(),'ether'));
+    set("BalanceContractWei",web3.fromWei(web3.eth.getBalance(contractAddress), 'ether'));
+    set("Tokensforsale",contractYODSE.balanceOf(contractAddress));
+    set("AllToken",contractYODSE.totalSupply());
+
+
+
+
     var balance =  web3.fromWei(eth.getBalance(address)); // выведет собр эфир - макс шкалы - 3000 ether(40 000 для hardCAp)
     var price = web3.fromWei(1000000000000000); // выведет текущую цену в ETH
 
