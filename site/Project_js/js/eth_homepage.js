@@ -7,7 +7,7 @@ var CURRENT_URL=MAINET_RPC_URL;
 $(document).ready(function()
 {
 
-    web3=new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/YOUR-API-TOKEN-HERE'));
+    web3=new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/VErbwOgRsS5RyJHEThON'));
     //web3=new Web3(new Web3.providers.HttpProvider(CURRENT_URL));
 
     var address = "0x4c322906982842D71E4Ffc6Fb707EBF250Fa0C48";
