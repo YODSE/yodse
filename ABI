@@ -1,8 +1,22 @@
 [
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "tokenTransferFromHolding",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [],
-		"name": "hardCapPreIco",
+		"name": "avaliableSupply",
 		"outputs": [
 			{
 				"name": "",
@@ -16,11 +30,11 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "startIcoDate",
+		"name": "name",
 		"outputs": [
 			{
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"payable": false,
@@ -30,21 +44,7 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "softCapPreIco",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "softCapMainSale",
+		"name": "totalSupply",
 		"outputs": [
 			{
 				"name": "",
@@ -77,6 +77,48 @@
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "decimals",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "endPreIcoDate",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "beneficiary",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "startPreIcoDate",
 		"outputs": [
 			{
@@ -89,98 +131,37 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "buyPrice",
-		"outputs": [
+		"constant": false,
+		"inputs": [
 			{
-				"name": "",
+				"name": "_value",
 				"type": "uint256"
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "owner",
+		"name": "burn",
 		"outputs": [
 			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "onChain",
-		"outputs": [
-			{
-				"name": "",
+				"name": "success",
 				"type": "bool"
 			}
 		],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"constant": true,
+		"constant": false,
 		"inputs": [],
-		"name": "name",
-		"outputs": [
-			{
-				"name": "",
-				"type": "string"
-			}
-		],
+		"name": "finalize",
+		"outputs": [],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "isFinalized",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "symbol",
-		"outputs": [
-			{
-				"name": "",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "weisRaised",
+		"name": "hardCapPreIco",
 		"outputs": [
 			{
 				"name": "",
@@ -196,24 +177,10 @@
 		"inputs": [
 			{
 				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "tokenHolders",
-		"outputs": [
-			{
-				"name": "",
 				"type": "address"
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "hardCapMainISale",
+		"name": "tokenFrozenTeam",
 		"outputs": [
 			{
 				"name": "",
@@ -245,8 +212,13 @@
 	},
 	{
 		"constant": true,
-		"inputs": [],
-		"name": "decimals",
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "tokenFrozenReserve",
 		"outputs": [
 			{
 				"name": "",
@@ -260,7 +232,7 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "totalSupply",
+		"name": "buyPrice",
 		"outputs": [
 			{
 				"name": "",
@@ -274,11 +246,11 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "endPreIcoDate",
+		"name": "isFinalized",
 		"outputs": [
 			{
 				"name": "",
-				"type": "uint256"
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -288,7 +260,54 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "avaliableSupply",
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "tokenHolders",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "hardCapMainISale",
 		"outputs": [
 			{
 				"name": "",
@@ -314,45 +333,18 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "beneficiary",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Burn",
-		"type": "event"
-	},
-	{
 		"constant": false,
 		"inputs": [
 			{
-				"name": "",
+				"name": "_to",
 				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
 			}
 		],
-		"name": "tokenTransferFromHolding",
+		"name": "transfer",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -373,9 +365,32 @@
 		"type": "function"
 	},
 	{
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "fallback"
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newEndIcoDate",
+				"type": "uint256"
+			}
+		],
+		"name": "setEndData",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "startIcoDate",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"constant": false,
@@ -387,13 +402,67 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
+		"constant": true,
 		"inputs": [],
-		"name": "refundICO",
-		"outputs": [],
+		"name": "weisRaised",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "tokenFrozenConsult",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "onChain",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
-		"type": "function"
+		"type": "constructor"
+	},
+	{
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "fallback"
 	},
 	{
 		"anonymous": false,
@@ -424,78 +493,20 @@
 		"type": "event"
 	},
 	{
-		"constant": false,
+		"anonymous": false,
 		"inputs": [
 			{
-				"name": "_to",
+				"indexed": true,
+				"name": "from",
 				"type": "address"
 			},
 			{
-				"name": "_value",
+				"indexed": false,
+				"name": "value",
 				"type": "uint256"
 			}
 		],
-		"name": "transfer",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "burn",
-		"outputs": [
-			{
-				"name": "success",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "finalize",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "newEndIcoDate",
-				"type": "uint256"
-			}
-		],
-		"name": "setEndData",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "refundPreICO",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"name": "Burn",
+		"type": "event"
 	}
 ]
