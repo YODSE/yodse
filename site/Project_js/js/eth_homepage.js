@@ -515,21 +515,23 @@ $(document).ready(function()
         "type": "function"
     }
 ]);
-
 // речи о калькуляторе не было
-
      //  - сколько собрано эфира
     contractYODSE = web3.eth.contract(ABIArray).at(contractAddress);
+/*
+   set("Investors",contractYODSE.tokenHolders());
+      set("price",web3.fromWei(contractYODSE.buyPrice(),'ether'));
+      set("BalanceContractWei",web3.fromWei(web3.eth.getBalance(contractAddress), 'ether'));
+      set("Tokensforsale",contractYODSE.balanceOf(contractAddress));
+      set("AllToken",contractYODSE.totalSupply());
+*/
+var BalanceContractWei = web3.fromWei(web3.eth.getBalance(contractAddress), 'ether');
+var Tokensforsale = contractYODSE.balanceOf(contractAddress);
+var Investors = contractYODSE.tokenHolders();
+var price = web3.fromWei(contractYODSE.buyPrice(),'ether');
+var AllToken = contractYODSE.totalSupply();
 
-    set("Investors",contractYODSE.tokenHolders());
-    set("price",web3.fromWei(contractYODSE.buyPrice(),'ether'));
-    set("BalanceContractWei",web3.fromWei(web3.eth.getBalance(contractAddress), 'ether'));
-    set("Tokensforsale",contractYODSE.balanceOf(contractAddress));
-    set("AllToken",contractYODSE.totalSupply());
-
-
-
-
+    /*
     var balance =  web3.fromWei(eth.getBalance(address)); // выведет собр эфир - макс шкалы - 3000 ether(40 000 для hardCAp)
     var price = web3.fromWei(1000000000000000); // выведет текущую цену в ETH
 
@@ -546,10 +548,14 @@ var balance = web3.eth.getBalance("0x4c322906982842D71E4Ffc6Fb707EBF250Fa0C48");
     var availableSupply; // доступные к продаже
     var tokenHolders; // количеств оинвесторов
 
+
+
 var contractInstance=MyContract.at('0x4c322906982842D71E4Ffc6Fb707EBF250Fa0C48');
 
 var was_sold=contractInstance.totalSupply(); // сколько продано токенов
     // сколько осталось = totalSupply -  was_sold - 40 000 000
+
+
 
 was_sold=(was_sold/100000000*0.005-(307.7186/3*5)-(175.7246/4*5)-(143.2501/4.5*5)-(110.6452/4.75*5))+ 307.7186+ 175.7246+ 143.2501+ 110.6452;
 
@@ -560,6 +566,6 @@ var eth_to_usd=$('.eth_to_usd').html();
 var usd_sum=$('.usd_contract_balance').data("value");
 
 usd_sum=parseFloat(usd_sum)+ parseFloat(was_sold)*parseFloat(eth_to_usd);$('.usd_contract_balance').html(usd_sum.toFixed(0));
-* */
+**/
 
 });
