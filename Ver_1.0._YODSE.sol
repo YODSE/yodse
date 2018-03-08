@@ -139,7 +139,7 @@ contract YodseCrowdsale is TokenERC20 {
     // 40 000 ether
     uint public constant hardCapMainISale = 40000000000000000000000;
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
-    address public beneficiary = 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95;
+    address beneficiary = 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95;
     uint public startPreIcoDate = 1520208001; // Monday, 05-Mar-18 00:00:01 UTC
     uint public endPreIcoDate = 1521503999; // Monday, 19-Mar-18 23:59:59 UTC
     uint public startIcoDate = 1522281601; // Thursday, 29-Mar-18 00:00:01 UTC
@@ -173,11 +173,11 @@ contract YodseCrowdsale is TokenERC20 {
     event Finalized();
 
     mapping (address => bool) public onChain;
-    address[] public tokenHolders;  // tokenHolders.length - вернет общее количество инвесторов
+    address[] public tokenHolders;  // tokenHolders.length
     mapping(address => uint) public balances; // храним адрес инвестора и исколь он инвестировал
-    mapping(address => uint) public tokenFrozenTeam; // храним адрес разработчиков
-    mapping(address => uint) public tokenFrozenReserve; // храним адрес резервного фонда
-    mapping(address => uint) public tokenFrozenConsult; // храним адрес Консультантов
+    mapping(address => uint) public tokenFrozenTeam; // safe address developers
+    mapping(address => uint) public tokenFrozenReserve; // safe address ReserveFond
+    mapping(address => uint) public tokenFrozenConsult; // safe address advisers
 
 
     function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
@@ -223,6 +223,7 @@ contract YodseCrowdsale is TokenERC20 {
             tokenHolders.push(msg.sender);
             onChain[msg.sender] = true;
         }
+        investors = tokenHolders.length;
     }
 
     function withDiscount(uint256 _amount, uint _percent) internal pure returns (uint256) {
@@ -256,8 +257,8 @@ contract YodseCrowdsale is TokenERC20 {
    * work. Calls the contract's finalization function.
    */
     function finalize() onlyOwner public {
-        require(!isFinalized); // нельзя вызвать второй раз (проверка что не true)
-        require(now > endIcoDate /*weisRaised>softCapMainSale*/ );
+        require(!isFinalized);
+        require(now > endIcoDate);
 
         finalization();
         Finalized();
