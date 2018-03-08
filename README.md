@@ -5,7 +5,7 @@ Your Open Direct Sales Ecosystem
 
 [ABI Interface](https://github.com/PillarDevelopment/YODSE/blob/master/ABI)
 
-[TestNet](https://rinkeby.etherscan.io/address/0x1ca13c6d82c5ebb7a34a71f2a4739606a2d12b7d)
+[TestNet](https://rinkeby.etherscan.io/address/0xb98f3b9afe6f53b6c627ffc423059ae8fbdee329)
 
 [BYTECODE](https://github.com/PillarDevelopment/YODSE/blob/master/ByteCode)
 
