@@ -83,7 +83,7 @@ contract TokenERC20 is Ownable {
     uint256 public totalSupply;
     // tokens for sale
     uint256 public avaliableSupply;  // totalSupply - all reserve
-    uint256 public constant buyPrice = 1000 szabo; //0,001 ether
+    uint256 public constant buyPrice = 1000000000000000; //0,001 ether
 
     mapping (address => uint256) public balanceOf;
 
@@ -162,6 +162,7 @@ contract YodseCrowdsale is TokenERC20 {
     uint256 constant bountyReserve = 3000000; //3 000 000
     // variable counts the number of investora after call sell function.
     uint256 public investors;
+    uint public tokensForsale;
 
     address team = 0x2Ab1dF22ef514ab94518862082E653457A5c1aFc; //  !!!! TEST ADDRESS
     address reserve = 0x7eDE8260e573d3A3dDfc058f19309DF5a1f7397E; //  !!!! TEST ADDRESS//
@@ -255,6 +256,7 @@ contract YodseCrowdsale is TokenERC20 {
         // добавляем в адрес инвестора количество инвестированных эфиров
         balances[msg.sender] = balances[msg.sender].add(msg.value);
         investors  += 1;
+        tokensForsale = avaliableSupply/1000000000;
     }
     /*
     function refundPreICO() public {
