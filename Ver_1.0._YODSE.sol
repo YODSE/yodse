@@ -161,7 +161,7 @@ contract YodseCrowdsale is TokenERC20 {
     // tokens for bounty programs
     uint256 constant bountyReserve = 3000000; //3 000 000
     // variable counts the number of investora after call sell function.
-    //uint256 public investors = 0;
+    uint256 public investors;
 
     address team = 0x2Ab1dF22ef514ab94518862082E653457A5c1aFc; //  !!!! TEST ADDRESS
     address reserve = 0x7eDE8260e573d3A3dDfc058f19309DF5a1f7397E; //  !!!! TEST ADDRESS//
@@ -254,6 +254,7 @@ contract YodseCrowdsale is TokenERC20 {
         weisRaised = weisRaised.add(msg.value);
         // добавляем в адрес инвестора количество инвестированных эфиров
         balances[msg.sender] = balances[msg.sender].add(msg.value);
+        investors  += 1;
     }
     /*
     function refundPreICO() public {
