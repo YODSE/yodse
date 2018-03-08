@@ -134,12 +134,8 @@ contract TokenERC20 is Ownable {
 */
 contract YodseCrowdsale is TokenERC20 {
     using SafeMath for uint;
-    // 1000 ether
-    //uint public constant softCapPreIco = 1000000000000000000000;
     // 3000 ether
     uint public constant hardCapPreIco = 3000000000000000000000;
-    // 7000 ether
-    //uint public constant softCapMainSale = 7000000000000000000000;
     // 40 000 ether
     uint public constant hardCapMainISale = 40000000000000000000000;
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
@@ -162,7 +158,6 @@ contract YodseCrowdsale is TokenERC20 {
     uint256 constant bountyReserve = 3000000; //3 000 000
     // variable counts the number of investora after call sell function.
     uint256 public investors;
-    uint public tokensForsale;
 
     address team = 0x2Ab1dF22ef514ab94518862082E653457A5c1aFc; //  !!!! TEST ADDRESS
     address reserve = 0x7eDE8260e573d3A3dDfc058f19309DF5a1f7397E; //  !!!! TEST ADDRESS//
@@ -172,7 +167,6 @@ contract YodseCrowdsale is TokenERC20 {
     address test = 0x253579153746cD2D09C89e73810E369ac6F16115; //  !!!! TEST ADDRESS//
 
     bool distribute = false;
-    //bool transferFrozen = false;
     uint public weisRaised;
     bool public isFinalized = false;
 
@@ -184,7 +178,7 @@ contract YodseCrowdsale is TokenERC20 {
     mapping(address => uint) public tokenFrozenTeam; // храним адрес разработчиков
     mapping(address => uint) public tokenFrozenReserve; // храним адрес резервного фонда
     mapping(address => uint) public tokenFrozenConsult; // храним адрес Консультантов
-    //mapping(address => uint) public tokenFrozenBounty; // храним адрес Баунти
+
 
     function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
 
@@ -256,24 +250,7 @@ contract YodseCrowdsale is TokenERC20 {
         // добавляем в адрес инвестора количество инвестированных эфиров
         balances[msg.sender] = balances[msg.sender].add(msg.value);
         investors  += 1;
-        tokensForsale = avaliableSupply/1000000000;
     }
-    /*
-    function refundPreICO() public {
-        require(weisRaised < softCapPreIco && now > endPreIcoDate);
-        uint value = balances[msg.sender];  //
-        balances[msg.sender] = 0;
-        msg.sender.transfer(value);
-        weisRaised -= value;
-    }
-    function refundICO() public {
-        require(weisRaised < softCapMainSale && now > endIcoDate);
-        uint value = balances[msg.sender];  //
-        balances[msg.sender] = 0;
-        msg.sender.transfer(value);
-        weisRaised -= value;
-    }
-    */
     /**
    * @dev Must be called after crowdsale ends, to do some extra finalization
    * work. Calls the contract's finalization function.
@@ -301,20 +278,17 @@ contract YodseCrowdsale is TokenERC20 {
         _transfer(this, beneficiary, 21500000*DEC); // frozen all
         _transfer(this, team, 7500000*DEC); // immediately Team 1/2
         tokenFrozenTeam[team] = tokenFrozenTeam[team].add(7500000*DEC);
-        //tokenFrozenTeam[team] += 7500000*DEC; // кладем в меппинг первые токены
         _transfer(this, consult, 2000000*DEC); // immediately advisers 1/3
         tokenFrozenConsult[consult] = tokenFrozenConsult[consult].add(4000000*DEC); // в меппинг кладем 6 000 000 - 4 000 000
         _transfer(this, test, testReserve*DEC); // immediately testers all
         _transfer(this, marketing, marketingReserve*DEC); // immediately marketing all
         _transfer(this, bounty, bountyReserve*DEC);
         tokenFrozenReserve[reserve] = tokenFrozenReserve[reserve].add(10000000*DEC);  // immediately reserve all
-        //tokenFrozenBounty[bounty] = tokenFrozenBounty[bounty].add(3000000*DEC); // immediately bounty all frozen
         avaliableSupply -= 40000000*DEC;
         distribute = true;
     }
     // функция выдачи замороженных токенов членам команды
     function tokenTransferFromHolding(address) public  holdersSupport {
-        //require(!transferFrozen);
         require(now > endIcoDate);
         // !!! reserve - 10 000 000 после 1.1.2019
         if (msg.sender == reserve && now > 1546300801) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
@@ -346,19 +320,5 @@ contract YodseCrowdsale is TokenERC20 {
             balanceOf[beneficiary] = balanceOf[beneficiary].sub(2000000*DEC); // списали с бенефициара
             tokenFrozenConsult[consult] = 0; // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
         }
-        // bounty - 1 500 000 после endIcoDate + 2592000 (30 дней)
-        /*else if (msg.sender == bounty && now > endIcoDate + 2592000) { // 1535760001 - 09/01/2018 @ 12:00am (UTC)
-            require(tokenFrozenBounty[bounty] == 3000000*DEC); // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
-            _transfer(beneficiary, bounty, 1500000*DEC);
-            balanceOf[beneficiary] = balanceOf[beneficiary].sub(1500000*DEC); // списали с бенефициара
-            tokenFrozenBounty[bounty] = tokenFrozenBounty[bounty].sub(1500000*DEC); // списали с мепинга и уменьшили его до 1 500 000 чтобы прошел следующую проверку после  1.1.2019
-        }
-        // и 1 500 000 после endIcoDate + 5184000 (30 дней)
-        else if (msg.sender == bounty && now > endIcoDate + 5184000) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
-            require(tokenFrozenBounty[bounty] == 1500000*DEC); // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
-            _transfer(beneficiary, bounty, 1500000*DEC);
-            balanceOf[beneficiary] = balanceOf[beneficiary].sub(1500000*DEC); // списали с бенефициара
-            tokenFrozenBounty[bounty] = 0; // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
-        } */
     }
 }
