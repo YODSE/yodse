@@ -1,0 +1,596 @@
+var MAINET_RPC_URL = 'https://mainnet.infura.io/metamask' ;
+var ROPSTEN_RPC_URL = 'https://ropsten.infura.io/metamask' ;
+var KOVAN_RPC_URL = 'https://kovan.infura.io/metamask' ;
+var RINKEBY_RPC_URL = 'https://rinkeby.infura.io/metamask' ;
+
+var CURRENT_URL = RINKEBY_RPC_URL ;
+
+
+
+const contractAddress   = "0x1CA13C6d82c5Ebb7A34a71f2a4739606a2d12B7D";
+
+const contractABI = [
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "hardCapPreIco",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "symbol",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "string"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "startPreIcoDate",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "startIcoDate",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"name": "balances",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"name": "tokenFrozenConsult",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"name": "onChain",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "bool"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "name",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "string"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "isFinalized",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "bool"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "investors",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "weisRaised",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"name": "tokenFrozenReserve",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "hardCapMainISale",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"name": "tokenFrozenTeam",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "beneficiary",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"name": "tokenHolders",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "endPreIcoDate",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"name": "balanceOf",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "endIcoDate",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "totalSupply",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "buyPrice",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "avaliableSupply",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "decimals",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "owner",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"anonymous": false,
+                    		"inputs": [
+                    			{
+                    				"indexed": true,
+                    				"name": "from",
+                    				"type": "address"
+                    			},
+                    			{
+                    				"indexed": false,
+                    				"name": "value",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"name": "Burn",
+                    		"type": "event"
+                    	},
+                    	{
+                    		"payable": true,
+                    		"stateMutability": "payable",
+                    		"type": "fallback"
+                    	},
+                    	{
+                    		"constant": false,
+                    		"inputs": [
+                    			{
+                    				"name": "_to",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"name": "withdrawEthFromContract",
+                    		"outputs": [],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": false,
+                    		"inputs": [],
+                    		"name": "distributionTokens",
+                    		"outputs": [],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"anonymous": false,
+                    		"inputs": [],
+                    		"name": "Finalized",
+                    		"type": "event"
+                    	},
+                    	{
+                    		"anonymous": false,
+                    		"inputs": [
+                    			{
+                    				"indexed": true,
+                    				"name": "from",
+                    				"type": "address"
+                    			},
+                    			{
+                    				"indexed": true,
+                    				"name": "to",
+                    				"type": "address"
+                    			},
+                    			{
+                    				"indexed": false,
+                    				"name": "value",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"name": "Transfer",
+                    		"type": "event"
+                    	},
+                    	{
+                    		"constant": false,
+                    		"inputs": [
+                    			{
+                    				"name": "_to",
+                    				"type": "address"
+                    			},
+                    			{
+                    				"name": "_value",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"name": "transfer",
+                    		"outputs": [],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"inputs": [],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "constructor"
+                    	},
+                    	{
+                    		"constant": false,
+                    		"inputs": [
+                    			{
+                    				"name": "_value",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"name": "burn",
+                    		"outputs": [
+                    			{
+                    				"name": "success",
+                    				"type": "bool"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": false,
+                    		"inputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"name": "tokenTransferFromHolding",
+                    		"outputs": [],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": false,
+                    		"inputs": [
+                    			{
+                    				"name": "newEndIcoDate",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"name": "setEndData",
+                    		"outputs": [],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": false,
+                    		"inputs": [],
+                    		"name": "finalize",
+                    		"outputs": [],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "function"
+                    	}
+                    ];
+
+
+$(document).ready(function(){
+
+    if (typeof web3 !== 'undefined') {
+        web3 = new Web3(web3.currentProvider);
+    } else {
+        // set the provider you want from Web3.providers
+        web3 = new Web3(new Web3.providers.HttpProvider(CURRENT_URL));
+    }
+
+    var myContract = web3.eth.contract(contractABI);
+    var myContractInstance = myContract.at(contractAddress);
+
+
+    myContractInstance.avaliableSupply(function(err, res){
+        console.log();
+        $('#avaliableSupply').html(res['c'][0]);
+    });
+
+
+    myContractInstance.investors(function(err, res){
+        console.log();
+        $('#investors').html(res['c'][0]);
+    });
+
+
+    myContractInstance.buyPrice(function(err, res){
+        console.log();
+        $('#buyPrice').html(res['c'][0]);
+    });
+
+    myContractInstance.weisRaised(function(err, res){
+            console.log();
+            $('#weisRaised').html(res['c'][0]);
+        });
+     myContractInstance.totalSupply(function(err, res){
+                console.log();
+                $('#totalSupply').html(res['c'][0]);
+            });
+     myContractInstance.hardCapMainISale(function(err, res){
+                console.log();
+                $('#hardCapMainISale').html(res['c'][0]);
+            });
+      myContractInstance.weisRaised(function(err, res){
+                 console.log();
+                 $('#weisRaised').html(res['c'][0]);
+             });
+
+      myContractInstance.weisRaised(function(err, res){
+                 console.log();
+                 $('#weisRaised').html(res['c'][0]);
+             });
+
+    /*myContractInstance.tokenHolders(0, function(err, res){
+              console.log(res);
+          });*/
+});
+// сделать переменную которая возвращает длину массива - и ее вызывать или вообще сделать переменную с инвесторами
