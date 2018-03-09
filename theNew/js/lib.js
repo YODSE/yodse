@@ -562,7 +562,7 @@ $(document).ready(function(){
       });
 myContractInstance.weisRaised(function(err, res){
           var weisRaised = web3.fromWei(res , 'ether');// + res['c'][1].toString();
-          weisRaised = weisRaised['c'][0].toString() + weisRaised['c'][1].toString();
+          weisRaised = weisRaised['c'][0].toString();
           $('#weisRaised').html(weisRaised);
           console.log(weisRaised);
       });
