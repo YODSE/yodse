@@ -250,7 +250,7 @@ contract YodseCrowdsale is TokenERC20 {
         weisRaised = weisRaised.add(msg.value);
         // добавляем в адрес инвестора количество инвестированных эфиров
         balances[msg.sender] = balances[msg.sender].add(msg.value);
-        investors  += 1;
+        //investors  += 1;
     }
     /**
    * @dev Must be called after crowdsale ends, to do some extra finalization
