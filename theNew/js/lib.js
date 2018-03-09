@@ -7,13 +7,27 @@ var CURRENT_URL = RINKEBY_RPC_URL ;
 
 
 
-const contractAddress   = "0x2e87ec11a16d8ca1a628cb7469c30e6ae74f6fd6";
+const contractAddress   = "0x6dad0f29eb06c419eb32c78736981ce03533f8e0";
 
 const contractABI = [
                     	{
                     		"constant": true,
                     		"inputs": [],
                     		"name": "investors",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"payable": false,
+                    		"stateMutability": "view",
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": true,
+                    		"inputs": [],
+                    		"name": "tokenFOrSale",
                     		"outputs": [
                     			{
                     				"name": "",
@@ -385,18 +399,10 @@ const contractABI = [
                     		"type": "event"
                     	},
                     	{
-                    		"constant": false,
-                    		"inputs": [
-                    			{
-                    				"name": "newEndIcoDate",
-                    				"type": "uint256"
-                    			}
-                    		],
-                    		"name": "setEndData",
-                    		"outputs": [],
+                    		"inputs": [],
                     		"payable": false,
                     		"stateMutability": "nonpayable",
-                    		"type": "function"
+                    		"type": "constructor"
                     	},
                     	{
                     		"constant": false,
@@ -491,6 +497,25 @@ const contractABI = [
                     		"type": "function"
                     	},
                     	{
+                    		"payable": true,
+                    		"stateMutability": "payable",
+                    		"type": "fallback"
+                    	},
+                    	{
+                    		"constant": false,
+                    		"inputs": [
+                    			{
+                    				"name": "newEndIcoDate",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"name": "setEndData",
+                    		"outputs": [],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "function"
+                    	},
+                    	{
                     		"constant": false,
                     		"inputs": [
                     			{
@@ -508,17 +533,6 @@ const contractABI = [
                     		"payable": false,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
-                    	},
-                    	{
-                    		"inputs": [],
-                    		"payable": false,
-                    		"stateMutability": "nonpayable",
-                    		"type": "constructor"
-                    	},
-                    	{
-                    		"payable": true,
-                    		"stateMutability": "payable",
-                    		"type": "fallback"
                     	}
                     ];
 
@@ -545,7 +559,7 @@ $(document).ready(function(){
 
 
     myContractInstance.avaliableSupply(function(err, res){
-        var avaliableSupply = res['c'][0].toString() + res['c'][1].toString();
+        var avaliableSupply = res['c'][0].toString() //+ res['c'][1].toString();
         $('#avaliableSupply').html(avaliableSupply);
         console.log(avaliableSupply);
     });
