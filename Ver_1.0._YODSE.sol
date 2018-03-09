@@ -183,7 +183,7 @@ contract YodseCrowdsale is TokenERC20 {
     function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
 
     modifier isUnderHardCap() {
-        require(beneficiary.balance <= hardCapMainISale);
+        require( weisRaised <= hardCapMainISale);
         _;
     }
 
