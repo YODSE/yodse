@@ -7,13 +7,13 @@ var CURRENT_URL = RINKEBY_RPC_URL ;
 
 
 
-const contractAddress   = "0x1CA13C6d82c5Ebb7A34a71f2a4739606a2d12B7D";
+const contractAddress   = "0x2e87ec11a16d8ca1a628cb7469c30e6ae74f6fd6";
 
 const contractABI = [
                     	{
                     		"constant": true,
                     		"inputs": [],
-                    		"name": "hardCapPreIco",
+                    		"name": "investors",
                     		"outputs": [
                     			{
                     				"name": "",
@@ -74,7 +74,7 @@ const contractABI = [
                     				"type": "address"
                     			}
                     		],
-                    		"name": "balances",
+                    		"name": "tokenFrozenConsult",
                     		"outputs": [
                     			{
                     				"name": "",
@@ -87,17 +87,12 @@ const contractABI = [
                     	},
                     	{
                     		"constant": true,
-                    		"inputs": [
-                    			{
-                    				"name": "",
-                    				"type": "address"
-                    			}
-                    		],
-                    		"name": "tokenFrozenConsult",
+                    		"inputs": [],
+                    		"name": "owner",
                     		"outputs": [
                     			{
                     				"name": "",
-                    				"type": "uint256"
+                    				"type": "address"
                     			}
                     		],
                     		"payable": false,
@@ -154,20 +149,6 @@ const contractABI = [
                     	{
                     		"constant": true,
                     		"inputs": [],
-                    		"name": "investors",
-                    		"outputs": [
-                    			{
-                    				"name": "",
-                    				"type": "uint256"
-                    			}
-                    		],
-                    		"payable": false,
-                    		"stateMutability": "view",
-                    		"type": "function"
-                    	},
-                    	{
-                    		"constant": true,
-                    		"inputs": [],
                     		"name": "weisRaised",
                     		"outputs": [
                     			{
@@ -201,7 +182,7 @@ const contractABI = [
                     	{
                     		"constant": true,
                     		"inputs": [],
-                    		"name": "hardCapMainISale",
+                    		"name": "hardCapPreIco",
                     		"outputs": [
                     			{
                     				"name": "",
@@ -234,11 +215,11 @@ const contractABI = [
                     	{
                     		"constant": true,
                     		"inputs": [],
-                    		"name": "beneficiary",
+                    		"name": "hardCapMainISale",
                     		"outputs": [
                     			{
                     				"name": "",
-                    				"type": "address"
+                    				"type": "uint256"
                     			}
                     		],
                     		"payable": false,
@@ -267,7 +248,7 @@ const contractABI = [
                     	{
                     		"constant": true,
                     		"inputs": [],
-                    		"name": "endPreIcoDate",
+                    		"name": "buyPrice",
                     		"outputs": [
                     			{
                     				"name": "",
@@ -300,7 +281,7 @@ const contractABI = [
                     	{
                     		"constant": true,
                     		"inputs": [],
-                    		"name": "endIcoDate",
+                    		"name": "endPreIcoDate",
                     		"outputs": [
                     			{
                     				"name": "",
@@ -328,7 +309,7 @@ const contractABI = [
                     	{
                     		"constant": true,
                     		"inputs": [],
-                    		"name": "buyPrice",
+                    		"name": "endIcoDate",
                     		"outputs": [
                     			{
                     				"name": "",
@@ -369,12 +350,17 @@ const contractABI = [
                     	},
                     	{
                     		"constant": true,
-                    		"inputs": [],
-                    		"name": "owner",
-                    		"outputs": [
+                    		"inputs": [
                     			{
                     				"name": "",
                     				"type": "address"
+                    			}
+                    		],
+                    		"name": "balances",
+                    		"outputs": [
+                    			{
+                    				"name": "",
+                    				"type": "uint256"
                     			}
                     		],
                     		"payable": false,
@@ -399,9 +385,18 @@ const contractABI = [
                     		"type": "event"
                     	},
                     	{
-                    		"payable": true,
-                    		"stateMutability": "payable",
-                    		"type": "fallback"
+                    		"constant": false,
+                    		"inputs": [
+                    			{
+                    				"name": "newEndIcoDate",
+                    				"type": "uint256"
+                    			}
+                    		],
+                    		"name": "setEndData",
+                    		"outputs": [],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "function"
                     	},
                     	{
                     		"constant": false,
@@ -473,10 +468,27 @@ const contractABI = [
                     		"type": "function"
                     	},
                     	{
-                    		"inputs": [],
+                    		"constant": false,
+                    		"inputs": [
+                    			{
+                    				"name": "",
+                    				"type": "address"
+                    			}
+                    		],
+                    		"name": "tokenTransferFromHolding",
+                    		"outputs": [],
                     		"payable": false,
                     		"stateMutability": "nonpayable",
-                    		"type": "constructor"
+                    		"type": "function"
+                    	},
+                    	{
+                    		"constant": false,
+                    		"inputs": [],
+                    		"name": "finalize",
+                    		"outputs": [],
+                    		"payable": false,
+                    		"stateMutability": "nonpayable",
+                    		"type": "function"
                     	},
                     	{
                     		"constant": false,
@@ -498,41 +510,15 @@ const contractABI = [
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
-                    		"inputs": [
-                    			{
-                    				"name": "",
-                    				"type": "address"
-                    			}
-                    		],
-                    		"name": "tokenTransferFromHolding",
-                    		"outputs": [],
-                    		"payable": false,
-                    		"stateMutability": "nonpayable",
-                    		"type": "function"
-                    	},
-                    	{
-                    		"constant": false,
-                    		"inputs": [
-                    			{
-                    				"name": "newEndIcoDate",
-                    				"type": "uint256"
-                    			}
-                    		],
-                    		"name": "setEndData",
-                    		"outputs": [],
-                    		"payable": false,
-                    		"stateMutability": "nonpayable",
-                    		"type": "function"
-                    	},
-                    	{
-                    		"constant": false,
                     		"inputs": [],
-                    		"name": "finalize",
-                    		"outputs": [],
                     		"payable": false,
                     		"stateMutability": "nonpayable",
-                    		"type": "function"
+                    		"type": "constructor"
+                    	},
+                    	{
+                    		"payable": true,
+                    		"stateMutability": "payable",
+                    		"type": "fallback"
                     	}
                     ];
 
@@ -550,47 +536,46 @@ $(document).ready(function(){
     var myContractInstance = myContract.at(contractAddress);
 
 
+    var availableSupply = 0;
+    var totalSupply = 0;
+    var investors = 0;
+    var buyPrice = 0;
+    var weisRaised = 0;
+    var hardCapMainISale = 0;
+
+
     myContractInstance.avaliableSupply(function(err, res){
-        console.log();
-        $('#avaliableSupply').html(res['c'][0]);
+        var avaliableSupply = res['c'][0].toString() + res['c'][1].toString();
+        $('#avaliableSupply').html(avaliableSupply);
+        console.log(avaliableSupply);
     });
 
-
-    myContractInstance.investors(function(err, res){
-        console.log();
-        $('#investors').html(res['c'][0]);
-    });
-
-
-    myContractInstance.buyPrice(function(err, res){
-        console.log();
-        $('#buyPrice').html(res['c'][0]);
-    });
-
-    myContractInstance.weisRaised(function(err, res){
-            console.log();
-            $('#weisRaised').html(res['c'][0]);
-        });
      myContractInstance.totalSupply(function(err, res){
-                console.log();
-                $('#totalSupply').html(res['c'][0]);
-            });
-     myContractInstance.hardCapMainISale(function(err, res){
-                console.log();
-                $('#hardCapMainISale').html(res['c'][0]);
-            });
-      myContractInstance.weisRaised(function(err, res){
-                 console.log();
-                 $('#weisRaised').html(res['c'][0]);
-             });
+              var totalSupply = res['c'][0].toString();
+              $('#totalSupply').html(totalSupply);
+              console.log(totalSupply);
+          });
+ myContractInstance.buyPrice(function(err, res){
+          var buyPrice = res['c'][0].toString();// + res['c'][1].toString();
+          $('#buyPrice').html(buyPrice);
+          console.log(buyPrice);
+      });
+myContractInstance.weisRaised(function(err, res){
+          var weisRaised = web3.fromWei(res , 'ether');// + res['c'][1].toString();
+          weisRaised = weisRaised['c'][0].toString() + weisRaised['c'][1].toString();
+          $('#weisRaised').html(weisRaised);
+          console.log(weisRaised);
+      });
 
-      myContractInstance.weisRaised(function(err, res){
-                 console.log();
-                 $('#weisRaised').html(res['c'][0]);
-             });
+      myContractInstance.hardCapMainISale(function(err, res){
+                   var hardCapMainISale = web3.fromWei(res , 'ether');// + res['c'][1].toString();
+                   hardCapMainISale = hardCapMainISale['c'][0].toString();
+                   $('#hardCapMainISale').html(hardCapMainISale);
+                   console.log(hardCapMainISale);
+               });
 
-    /*myContractInstance.tokenHolders(0, function(err, res){
-              console.log(res);
-          });*/
+      myContractInstance.investors(function(err, res){
+          var investors = res['c'][0].toString();
+          $('#investors').html(investors);
+      });
 });
-// сделать переменную которая возвращает длину массива - и ее вызывать или вообще сделать переменную с инвесторами
