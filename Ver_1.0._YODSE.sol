@@ -135,9 +135,9 @@ contract TokenERC20 is Ownable {
 contract YodseCrowdsale is TokenERC20 {
     using SafeMath for uint;
     // 3000 ether
-    uint public constant hardCapPreIco = 3000000000000000000000;
+    uint public constant hardCapPreIco = 6000000000000000000000;
     // 40 000 ether
-    uint public constant hardCapMainISale = 40000000000000000000000;
+    uint public constant hardCapMainISale = 80000000000000000000000;
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
     address beneficiary = 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95;
     uint public startPreIcoDate = 1520208001; // Monday, 05-Mar-18 00:00:01 UTC
