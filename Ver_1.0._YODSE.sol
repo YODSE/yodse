@@ -1,4 +1,5 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.21;
+
 /*
 * @author Ivan Borisov (2622610@gmail.com) (Github.com/pillardevelopment)
 * @dev Source code hence -
