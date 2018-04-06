@@ -33,6 +33,8 @@ ICO
 */
 
 pragma solidity ^0.4.21;
+
+import "https://github.com/oraclize/ethereum-api/oraclizeAPI_0.5.sol";
 /*
 * @author Ivan Borisov (2622610@gmail.com) (Github.com/pillardevelopment)
 * @dev Source code hence -
@@ -113,14 +115,14 @@ contract TokenERC20 is Ownable {
 
     string public name;
     string public symbol;
-    uint256 public decimals = 8;
-    uint256 DEC = 10 ** uint256(decimals);
+    uint256 public decimals = 18;
+    uint256 DEC = 10 ** decimals;
     address public owner;  //0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
     // all tokens
     uint256 public totalSupply;
     // tokens for sale
     uint256 public avaliableSupply;  // totalSupply - all reserve
-    uint256 public constant buyPrice = 1000000000000000; //0,001 ether
+
 
     mapping (address => uint256) public balanceOf;
 
@@ -148,7 +150,7 @@ contract TokenERC20 is Ownable {
         uint previousBalances = balanceOf[_from] + balanceOf[_to];
         balanceOf[_from] -= _value;
         balanceOf[_to] += _value;
-        Transfer(_from, _to, _value);
+        emit Transfer(_from, _to, _value);
         assert(balanceOf[_from] + balanceOf[_to] == previousBalances);
     }
 
@@ -161,7 +163,7 @@ contract TokenERC20 is Ownable {
         balanceOf[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
         avaliableSupply -= _value;
-        Burn(msg.sender, _value);
+        emit Burn(msg.sender, _value);
         return true;
     }
 }
@@ -169,7 +171,7 @@ contract TokenERC20 is Ownable {
 ----------------------------------------------------------------------------------------------------------------------
 * @dev YodseCrowdsale contract
 */
-contract YodseCrowdsale is TokenERC20 {
+contract YodseCrowdsale is TokenERC20, usingOraclize {
     using SafeMath for uint;
     // 3000 ether
     uint public constant hardCapPreIco = 6000000000000000000000;
@@ -195,6 +197,10 @@ contract YodseCrowdsale is TokenERC20 {
     uint256 constant bountyReserve = 3000000; //3 000 000
     // variable counts the number of investora after call sell function.
     uint256 public investors;
+
+    uint256 public etherBuyPrice; //0,001 ether
+    uint256 public tokenNominal = 1000000000000000000; // 1 token = 1 USD
+    uint256 public usdToEther;
 
     address team = 0x2Ab1dF22ef514ab94518862082E653457A5c1aFc; //  !!!! TEST ADDRESS
     address reserve = 0x7eDE8260e573d3A3dDfc058f19309DF5a1f7397E; //  !!!! TEST ADDRESS//
@@ -230,7 +236,7 @@ contract YodseCrowdsale is TokenERC20 {
     }
 
     function sell(address _investor, uint256 amount) internal {
-        uint256 _amount = amount.mul(DEC).div(buyPrice);
+        uint256 _amount = amount.mul(DEC).div(etherBuyPrice);
         // token discount PreIco (5 - 19 mart 2018) 30%
         if (now > startPreIcoDate && now < endPreIcoDate) {
             _amount = _amount.add(withDiscount(_amount, 30));
@@ -289,25 +295,18 @@ contract YodseCrowdsale is TokenERC20 {
         balances[msg.sender] = balances[msg.sender].add(msg.value);
         //investors  += 1;
     }
-    /**
-   * @dev Must be called after crowdsale ends, to do some extra finalization
-   * work. Calls the contract's finalization function.
-   */
+
     function finalize() onlyOwner public {
         require(!isFinalized);
         require(now > endIcoDate);
 
         finalization();
-        Finalized();
+        emit Finalized();
 
         isFinalized = true;
-        Burn(msg.sender, avaliableSupply);
+        emit Burn(msg.sender, avaliableSupply);
     }
-    /**
-     * @dev Can be overridden to add finalization logic. The overriding function
-     * should call super.finalization() to ensure the chain of finalization is
-     * executed entirely.
-     */
+
     function finalization() internal pure {
     }
 
@@ -359,4 +358,25 @@ contract YodseCrowdsale is TokenERC20 {
             tokenFrozenConsult[consult] = 0; // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
         }
     }
+
+    function __callback(bytes32 myid, string result) public {
+        if (msg.sender != oraclize_cbAddress()) throw;
+        usdToEther = parseInt(result, 0);
+        etherBuyPrice = tokenNominal/usdToEther;
+    }
+
+    function updatePriceUsdToEther() public payable {
+        if (oraclize_getPrice("URL") > this.balance){
+            return;
+        } else {
+            oraclize_query("URL", "json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD).result.XETHZUSD.c.[0]");
+        }
+        //setPriceUSD();
+    }
+    /*
+    function setPriceUSD() internal {
+        etherBuyPrice = tokenNominal/usdToEther;
+    }
+    */
+
 }
