@@ -214,6 +214,8 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     bool public isFinalized = false;
 
     event Finalized();
+    event newOraclizeQuery(string description);
+    event newPriceTicker(uint price);
 
     mapping (address => bool) public onChain;
     address[] public tokenHolders;  // tokenHolders.length
@@ -223,7 +225,9 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     mapping(address => uint) public tokenFrozenConsult; // safe address advisers
 
 
-    function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
+    function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {
+        updatePriceUsdToEther();
+    }
 
     modifier isUnderHardCap() {
         require( weisRaised <= hardCapMainISale);
@@ -362,21 +366,22 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     function __callback(bytes32 myid, string result) public {
         if (msg.sender != oraclize_cbAddress()) throw;
         usdToEther = parseInt(result, 0);
+        newPriceTicker(usdToEther);
         etherBuyPrice = tokenNominal/usdToEther;
+        updatePriceUsdToEther();
     }
 
-    function updatePriceUsdToEther() public payable {
+    function updatePriceUsdToEther() public payable onlyOwner {
         if (oraclize_getPrice("URL") > this.balance){
+            newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
             return;
         } else {
-            oraclize_query("URL", "json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD).result.XETHZUSD.c.[0]");
+            newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
+            oraclize_query(43200, "URL", "json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD).result.XETHZUSD.c.[0]");
         }
-        //setPriceUSD();
     }
-    /*
-    function setPriceUSD() internal {
-        etherBuyPrice = tokenNominal/usdToEther;
+    // в случае ошибки при вызове оракула
+    function manualPriceUpdate(uint256 _usdPrice) public onlyOwner {
+        usdToEther = _usdPrice;
     }
-    */
-
 }
