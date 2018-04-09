@@ -172,6 +172,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     address consult = 0x135a7a2986ae47c8b054f1e0e1f1e0be0f58435b;
     address marketing = 0xb76329f2531675e8b3b2873d68c452d83aae072c;
     address bounty = 0xd340b5fcabf905f82ab5bb199925adcba11adcdb;
+    address[] public refererArray;
 
     bool distribute = false;
     uint public weisRaised;
@@ -249,8 +250,21 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     function withDiscount(uint256 _amount, uint _percent) internal pure returns (uint256) {
         return ((_amount * _percent) / 100);
     }
+    //
+    function setStartPreICODate(uint256 newStartPreIcoDate) public onlyOwner{
+        startPreIcoDate = newStartPreIcoDate;
+    }
+
+    function setendPreIcoDate(uint256 newendPreIcoDate) public onlyOwner{
+        endPreIcoDate = newendPreIcoDate;
+    }
+
+    function setStartICODate(uint256 newstartIcoDate) public onlyOwner{
+        startIcoDate = newstartIcoDate;
+    }
+
     // функция изменения даты окончания ICO собственником контракта
-    function setEndData(uint newEndIcoDate) public onlyOwner {
+    function setEndICODate(uint newEndIcoDate) public onlyOwner {
         endIcoDate  = newEndIcoDate;
     }
     // функция для отправки эфира с контракта
@@ -268,12 +282,42 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         //beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
         // добавляем получаные средства в собранное
         weisRaised = weisRaised.add(msg.value);
+
         // добавляем в адрес инвестора количество инвестированных эфиров
-        balances[msg.sender] = balances[msg.sender].add(msg.value);
-        //investors  += 1;
+        investors  += 1;
         investedEther[msg.sender] = investedEther[msg.sender].add(msg.value);
+
+        //balances[msg.sender] = balances[msg.sender].add(msg.value);
+
+        // Авторизация в реферальной программе
         inRefererList(msg.sender);
+
+        /*
+        */
+
+        //if(msg.data.length == 20) { // проверяем что в msd.data лежит адрес
+        //  address localref = bytesToAddress(bytes(msg.data)); // преобразовываем msg.data в адрес
+        //require(localref != msg.sender); // проверяем что там не адрес отправителя
+        //require(isRefererlisted(localref)); // проверяем что адрес реферера участвует в програме - чтобы не мог запилить аффилированный адрес
+        //uint refererTokens = msg.value.div(etherBuyPrice); // посчитали количество бонусных токенов
+        //refererTokens = withDiscount(refererTokens, 5);
+        //_transfer(referal, localref, refererTokens);
+        //}
     }
+
+    // функция преобразования msg.data в address
+    function bytesToAddress(bytes source) internal pure returns(address) {
+        uint result;
+        uint mul = 1;
+        for(uint i = 20; i > 0; i--) {
+            result += uint8(source[i-1])*mul;
+            mul = mul*256;
+        }
+        return address(result);
+    }
+
+
+
 
     function finalize() onlyOwner public {
         require(!isFinalized);
@@ -346,7 +390,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         emit newPriceTicker(usdToEther);
     }
 
-    function updatePriceUsdToEther() payable public onlyOwner  {
+    function updatePriceUsdToEther() payable {
         if (oraclize_getPrice("URL") > this.balance ){
             emit newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
             return;
@@ -369,11 +413,17 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         msg.sender.transfer(rate);
         weisRaised = weisRaised.sub(rate);
     }
-
+    // авторизовали в массиве участников программы
     function inRefererList(address referer) internal{
         require(!isRefererlisted(referer));
         refererlist[referer] = true;
+        refererArray.push(referer);
         emit AuthorizedReferer(referer, now);
+    }
+
+    function transferRefererList() public onlyOwner{
+        require(now > endIcoDate);
+        // _transfer(referal, refererArray, );
     }
 
     function isRefererlisted(address referer) public view returns(bool) {
