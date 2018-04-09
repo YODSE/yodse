@@ -1,16 +1,12 @@
 /*
 PreICO
 
-В случае, если не будет достигнут нижний предел – 1 000 000 USD(softcap), средства ранних инвесторов будут возвращены обратно.
-
 Покупатели токенов на pre-ICO и ICO на любую сумму становятся участниками реферальной программы, и им выплачивается вознаграждение в размере 5% от суммы покупок привлеченных рефералов.
 Первым покупателям токенов на pre-ICO и ICO на сумму не менее 1000 USD будет предусмотрен повышенный реферальный процент по сравнению с обычными держателями токенов и составит 7%.
 Реферальный фонд токенов в размере 10% от общего выпущенного количества блокируется до 01.01.2019г. (за исключением реферальных выплат в период pre-ICO и ICO),и дальнейшие выплаты рефералам будут доступны с 01.01.2019г. в соответствии с реферальной программой.
 
 + Оракул, меняющий цену 2 раза в сутки(сделано)
-+ новая рефрералка
-+ новые параметры
-+ тесты снова всего
+
 + блокмрованме средств реферальых
 */
 
@@ -169,7 +165,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
 
     uint256 public etherBuyPrice; //0,001 ether
     uint256 public tokenNominal = 1000000000000000000; // 1 token = 1 USD
-    uint256 public usdToEther;
+    uint public usdToEther;
 
     address team = 0xcc2fb3e7f4bc1b8948fa5163319cfe728dd1a471;
     address referal = 0x7c2c0ae6bac57e7d01198e6024b181f04e109faf;
@@ -197,7 +193,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
 
 
     function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {
-        updatePriceUsdToEther();
+
     }
 
     modifier isUnderHardCap() {
@@ -210,36 +206,33 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         _;
     }
 
-    /*
-
-    Скидка на период проведения ICO
-    15.05.2018 - 25.05.2018 - 20%
-    25.05.2018 - 05.06.2018 - 15%
-    05.06.2018 - 12.06.2018 - 10%
-    12.06.2018 - 17.06.2018 - 5%
-    17.06.2018 - 25.06.2018 - 3%
-    */
     function sell(address _investor, uint256 amount) internal {
         uint256 _amount = amount.mul(DEC).div(etherBuyPrice);
         // token discount PreIco (15 - 30 april  2018) 30%
         if (now > startPreIcoDate && now < endPreIcoDate) {
             _amount = _amount.add(withDiscount(_amount, 30));
-            // token discount ICO (1 - 10 april 2018) 20%
+            // 1526346000
+            // token discount ICO 15.05.2018 - 25.05.2018 - 20%
         } else if (now > startIcoDate && now < startIcoDate + 864000) { // 864000 = 10 days
             _amount = _amount.add(withDiscount(_amount, 20));
-            // token discount ICO (11 - 20 april 2018) 15%
-        } else if (now > startIcoDate + 864000 && now < startIcoDate + 1728000) {
+
+            // token discount ICO 25.05.2018 - 05.06.2018 - 15%
+        } else if (now >= startIcoDate + 864000 && now < startIcoDate + 1814400) {
             _amount = _amount.add(withDiscount(_amount, 15));
-            // token discount ICO (21 - 30 april 2018) 10%
-        } else if (now > startIcoDate + 1728000 && now < startIcoDate + 2592000) {
+
+            // token discount ICO 05.06.2018 - 12.06.2018 - 10%
+        } else if (now >= startIcoDate + 1814400 && now < startIcoDate + 2419200) {
             _amount = _amount.add(withDiscount(_amount, 10));
-            // token discount ICO (1 - 10 may 2018) 5%
-        } else if (now > startIcoDate + 2592000 && now < startIcoDate + 3456000) {
+
+            // token discount ICO 12.06.2018 - 17.06.2018 - 5%
+        } else if (now >= startIcoDate + 2419200 && now < startIcoDate + 2851200) {
             _amount = _amount.add(withDiscount(_amount, 5));
-            // token discount ICO (11 - 31 may 2018) 3%
-        } else if (now > startIcoDate + 3456001 && now < endIcoDate) {
+
+            // token discount ICO 17.06.2018 - 25.06.2018 - 3%
+        } else if (now >= startIcoDate + 2851200 && now < endIcoDate) {
             _amount = _amount.add(withDiscount(_amount, 3));
-            // token discount ICO (11 - 31 may 2018) 0%
+
+
         } else {
             _amount = _amount.add(withDiscount(_amount, 0));
         }
@@ -348,24 +341,24 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     function __callback(bytes32 myid, string result) public {
         if (msg.sender != oraclize_cbAddress()) throw;
         usdToEther = parseInt(result, 0);
-        newPriceTicker(usdToEther);
-        etherBuyPrice = tokenNominal/usdToEther;
         updatePriceUsdToEther();
+        etherBuyPrice = tokenNominal/usdToEther;
+        emit newPriceTicker(usdToEther);
     }
 
-    function updatePriceUsdToEther() public payable onlyOwner {
-        etherBuyPrice = tokenNominal/usdToEther;
-        if (oraclize_getPrice("URL") > this.balance){
-            newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
+    function updatePriceUsdToEther() payable public onlyOwner  {
+        if (oraclize_getPrice("URL") > this.balance ){
+            emit newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
             return;
         } else {
-            newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
-            oraclize_query(43200, "URL", "json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD).result.XETHZUSD.c.[0]");
+            emit newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
+            oraclize_query(200, "URL", "json(https://min-api.cryptocompare.com/data/pricehistorical?fsym=ETH&tsyms=USD ).ETH.USD");
         }
     }
     // в случае ошибки при вызове оракула
-    function manualPriceUpdate(uint256 _usdPrice) public onlyOwner {
+    function manualPriceUpdate(uint _usdPrice) public onlyOwner {
         usdToEther = _usdPrice;
+        etherBuyPrice = tokenNominal.div(usdToEther);
     }
 
     function refundPreICO() public {
