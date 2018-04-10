@@ -1,19 +1,10 @@
-/*
-PreICO
-Срок проведения с 15.04.2018г. по 30.04.2018г.
-
-Покупатели токенов на pre-ICO и ICO на любую сумму становятся участниками реферальной программы, и им выплачивается вознаграждение в размере 5% от суммы покупок привлеченных рефералов.
-Первым покупателям токенов на pre-ICO и ICO на сумму не менее 1000 USD будет предусмотрен повышенный реферальный процент по сравнению с обычными держателями токенов и составит 7%.
-Реферальный фонд токенов в размере 10% от общего выпущенного количества блокируется до 01.01.2019г. (за исключением реферальных выплат в период pre-ICO и ICO),и дальнейшие выплаты рефералам будут доступны с 01.01.2019г. в соответствии с реферальной программой.
-*/
-
+/* с 15.04.2018г. по 30.04.2018г.*/
 pragma solidity ^0.4.21;
 /*
 * @author Ivan Borisov (2622610@gmail.com) (Github.com/pillardevelopment)
 * @dev Source code hence -
 * https://github.com/PillarDevelopment/Barbarossa-Git/blob/master/contracts/BarbarossaInvestToken.sol
 */
-
 import "https://github.com/oraclize/ethereum-api/oraclizeAPI_0.5.sol";
 
 library SafeMath {
@@ -28,9 +19,9 @@ library SafeMath {
     }
 
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        // assert(b > 0); // Solidity automatically throws when dividing by 0
+        assert(b > 0); // Solidity automatically throws when dividing by 0
         uint256 c = a / b;
-        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+        assert(a == b * c + a % b); // There is no case in which this doesn't hold
         return c;
     }
 
@@ -66,12 +57,9 @@ contract TokenERC20 is Ownable {
     string public symbol;
     uint256 public decimals = 18;
     uint256 DEC = 10 ** uint256(decimals);
-    address public owner;  //0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
-    // all tokens
+    address public owner;
     uint256 public totalSupply;
-    // tokens for sale
-    uint256 public avaliableSupply;  // totalSupply - all reserve
-
+    uint256 public avaliableSupply;
 
     mapping (address => uint256) public balanceOf;
 
@@ -84,11 +72,11 @@ contract TokenERC20 is Ownable {
         string tokenSymbol
     ) public
     {
-        totalSupply = initialSupply * DEC;  // Update total supply with the decimal amount
-        balanceOf[this] = totalSupply;                // Give the creator all initial tokens
-        avaliableSupply = balanceOf[this];            // Show how much tokens on contract
-        name = tokenName;                                   // Set the name for display purposes
-        symbol = tokenSymbol;                               // Set the symbol for display purposes
+        totalSupply = initialSupply * DEC;
+        balanceOf[this] = totalSupply;
+        avaliableSupply = balanceOf[this];
+        name = tokenName;
+        symbol = tokenSymbol;
         owner = msg.sender;
     }
 
@@ -123,8 +111,6 @@ contract TokenERC20 is Ownable {
 contract YodseCrowdsale is TokenERC20, usingOraclize {
     using SafeMath for uint;
 
-
-
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
     address beneficiary = 0x6a59cb8b2dfa32522902bbecf75659d54dd63f95;
 
@@ -141,11 +127,9 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     uint256 constant referalFund = 10000000;// 10 000 000
     // tokens for contingency fund
     uint256 constant marketingReserve = 6000000; //6 000 000
-
     // tokens for bounty programs
     uint256 constant bountyReserve = 3000000; //3 000 000
 
-    // variable counts the number of investors after call sell function.
     uint256 public investors;
 
     address team = 0xcc2fb3e7f4bc1b8948fa5163319cfe728dd1a471;
@@ -171,10 +155,9 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     mapping(address => uint) public tokenFrozenConsult;
     mapping(address => uint256) public investedEther;
 
-    uint256 public tokenNominal = 1000000000000000000; // 1 token = 1 USD
+    uint256 public tokenNominal = 1000000000000000000;
     uint public usdToEther = 400;
-    uint256 public etherBuyPrice = tokenNominal.div(usdToEther); //0,001 ether
-
+    uint256 public etherBuyPrice = tokenNominal.div(usdToEther);
     uint256 public softcapPreSale = 1000000000000000000000000/usdToEther;
     uint256 public  hardCapPreIco = 3000000000000000000000000/usdToEther;
     uint256 public softCapMainSale = 7000000000000000000000000/usdToEther;
@@ -197,28 +180,21 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         // token discount PreIco (15 - 30 april  2018) 30%
         if (now > startPreIcoDate && now < endPreIcoDate) {
             _amount = _amount.add(withDiscount(_amount, 30));
-            // 1526346000
             // token discount ICO 15.05.2018 - 25.05.2018 - 20%
         } else if (now > startIcoDate && now < startIcoDate + 864000) { // 864000 = 10 days
             _amount = _amount.add(withDiscount(_amount, 20));
-
             // token discount ICO 25.05.2018 - 05.06.2018 - 15%
         } else if (now >= startIcoDate + 864000 && now < startIcoDate + 1814400) {
             _amount = _amount.add(withDiscount(_amount, 15));
-
             // token discount ICO 05.06.2018 - 12.06.2018 - 10%
         } else if (now >= startIcoDate + 1814400 && now < startIcoDate + 2419200) {
             _amount = _amount.add(withDiscount(_amount, 10));
-
             // token discount ICO 12.06.2018 - 17.06.2018 - 5%
         } else if (now >= startIcoDate + 2419200 && now < startIcoDate + 2851200) {
             _amount = _amount.add(withDiscount(_amount, 5));
-
             // token discount ICO 17.06.2018 - 25.06.2018 - 3%
         } else if (now >= startIcoDate + 2851200 && now < endIcoDate) {
             _amount = _amount.add(withDiscount(_amount, 3));
-
-
         } else {
             _amount = _amount.add(withDiscount(_amount, 0));
         }
@@ -235,40 +211,33 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     function withDiscount(uint256 _amount, uint _percent) internal pure returns (uint256) {
         return ((_amount * _percent) / 100);
     }
-    // функция изменения даты окончания ICO собственником контракта
+
     function setEndData(uint newEndIcoDate) public onlyOwner {
         endIcoDate  = newEndIcoDate;
     }
-    // функция для отправки эфира с контракта
+
     function withdrawEthFromContract(address _to) public onlyOwner
     {
-        //require(weisRaised >= softCapMainSale); // проверка когда можно вывести эфир
         _to.transfer(weisRaised);
     }
-    // функция payable для отправки эфира на адрес
+
     function () isUnderHardCap public payable {
         require(now > startPreIcoDate && now < endIcoDate);
         sell(msg.sender, msg.value);
-        // проверка что отправляемые средства >= 0,001 ethereum
         assert(msg.value >= 1 ether / 1000);
-        //beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
-        // добавляем получаные средства в собранное
         weisRaised = weisRaised.add(msg.value);
-        // добавляем в адрес инвестора количество инвестированных эфиров
-        //balances[msg.sender] = balances[msg.sender].add(msg.value);
         investors  += 1;
         investedEther[msg.sender] = investedEther[msg.sender].add(msg.value);
     }
 
     function finalize() onlyOwner public {
-        //require(!isFinalized);
-        //require(now > endIcoDate || weisRaised >= hardCapMainISale);
+        require(!isFinalized);
+        require(now > endIcoDate || weisRaised >= hardCapMainISale);
         emit Finalized(msg.sender, now);
         burn(avaliableSupply);
         isFinalized = true;
         emit Burn(msg.sender, avaliableSupply);
     }
-
 
     function distributionTokens() public onlyOwner {
         require(!distribute);
@@ -284,6 +253,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         avaliableSupply -= 40000000*DEC;
         distribute = true;
     }
+
     function tokenTransferFromHolding(address) public  holdersSupport {
         require(now > endIcoDate);
         // !!! team - 7 500 000 после 1.1.2020
@@ -336,7 +306,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
             oraclize_query(43200, "URL", "json(https://min-api.cryptocompare.com/data/pricehistorical?fsym=ETH&tsyms=USD ).ETH.USD");
         }
     }
-    // в случае ошибки при вызове оракула
+
     function manualPriceUpdate(uint _usdPrice) public onlyOwner {
         usdToEther = _usdPrice;
         etherBuyPrice = tokenNominal.div(usdToEther);
