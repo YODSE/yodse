@@ -123,10 +123,7 @@ contract TokenERC20 is Ownable {
 contract YodseCrowdsale is TokenERC20, usingOraclize {
     using SafeMath for uint;
 
-    uint256 public softcapPreSale = 1000000000000000000000000/usdToEther;
-    uint256 public  hardCapPreIco = 3000000000000000000000000/usdToEther;
-    uint256 public softCapMainSale = 7000000000000000000000000/usdToEther;
-    uint256 public  hardCapMainISale = 40000000000000000000000000/usdToEther;
+
 
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
     address beneficiary = 0x6a59cb8b2dfa32522902bbecf75659d54dd63f95;
@@ -148,7 +145,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     // tokens for bounty programs
     uint256 constant bountyReserve = 3000000; //3 000 000
 
-
+    // variable counts the number of investors after call sell function.
     uint256 public investors;
 
     address team = 0xcc2fb3e7f4bc1b8948fa5163319cfe728dd1a471;
@@ -168,7 +165,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
 
     mapping (address => bool) public onChain;
     address[] public tokenHolders;
-
+    mapping(address => uint) public balances;
     mapping(address => uint) public tokenFrozenTeam;
     mapping(address => uint) public tokenFrozenReferal;
     mapping(address => uint) public tokenFrozenConsult;
@@ -176,7 +173,12 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
 
     uint256 public tokenNominal = 1000000000000000000; // 1 token = 1 USD
     uint public usdToEther = 400;
-    uint256 public etherBuyPrice = tokenNominal.div(usdToEther);
+    uint256 public etherBuyPrice = tokenNominal.div(usdToEther); //0,001 ether
+
+    uint256 public softcapPreSale = 1000000000000000000000000/usdToEther;
+    uint256 public  hardCapPreIco = 3000000000000000000000000/usdToEther;
+    uint256 public softCapMainSale = 7000000000000000000000000/usdToEther;
+    uint256 public  hardCapMainISale = 40000000000000000000000000/usdToEther;
 
     function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
 
@@ -233,29 +235,34 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     function withDiscount(uint256 _amount, uint _percent) internal pure returns (uint256) {
         return ((_amount * _percent) / 100);
     }
-
+    // функция изменения даты окончания ICO собственником контракта
     function setEndData(uint newEndIcoDate) public onlyOwner {
         endIcoDate  = newEndIcoDate;
     }
-
+    // функция для отправки эфира с контракта
     function withdrawEthFromContract(address _to) public onlyOwner
     {
-        require(weisRaised >= softCapMainSale); // проверка когда можно вывести эфир
+        //require(weisRaised >= softCapMainSale); // проверка когда можно вывести эфир
         _to.transfer(weisRaised);
     }
-
+    // функция payable для отправки эфира на адрес
     function () isUnderHardCap public payable {
         require(now > startPreIcoDate && now < endIcoDate);
         sell(msg.sender, msg.value);
+        // проверка что отправляемые средства >= 0,001 ethereum
         assert(msg.value >= 1 ether / 1000);
+        //beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
+        // добавляем получаные средства в собранное
         weisRaised = weisRaised.add(msg.value);
+        // добавляем в адрес инвестора количество инвестированных эфиров
+        //balances[msg.sender] = balances[msg.sender].add(msg.value);
         investors  += 1;
         investedEther[msg.sender] = investedEther[msg.sender].add(msg.value);
     }
 
     function finalize() onlyOwner public {
-        require(!isFinalized);
-        require(now > endIcoDate || weisRaised >= hardCapMainISale);
+        //require(!isFinalized);
+        //require(now > endIcoDate || weisRaised >= hardCapMainISale);
         emit Finalized(msg.sender, now);
         burn(avaliableSupply);
         isFinalized = true;
@@ -277,21 +284,8 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         avaliableSupply -= 40000000*DEC;
         distribute = true;
     }
-
-    function transferForReferer(address _refer, uint256 _amount) public onlyOwner {
-        // !!! referal - 10 000 000 после 1.1.2019
-        //require(msg.sender == referal);
-        require(tokenFrozenReferal[referal] > 0);
-        _transfer(beneficiary, _refer, _amount*DEC);
-        balanceOf[beneficiary] = balanceOf[beneficiary].sub(_amount*DEC); // списали с бенефициара
-        tokenFrozenReferal[referal] = tokenFrozenReferal[referal].sub(_amount);
-    }
-
-
     function tokenTransferFromHolding(address) public  holdersSupport {
         require(now > endIcoDate);
-
-
         // !!! team - 7 500 000 после 1.1.2020
         if (msg.sender == team /* */ && now > 1577836801) { // 1577836801 - 01/01/2020 @ 12:00am (UTC)
             require(tokenFrozenTeam[team] == 7500000*DEC);  // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
@@ -346,5 +340,13 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     function manualPriceUpdate(uint _usdPrice) public onlyOwner {
         usdToEther = _usdPrice;
         etherBuyPrice = tokenNominal.div(usdToEther);
+    }
+
+    function transferForReferer(address _refer, uint256 _amount) public onlyOwner {
+        // !!! referal - 10 000 000 после 1.1.2019
+        require(tokenFrozenReferal[referal] > 0);
+        _transfer(beneficiary, _refer, _amount*DEC);
+        balanceOf[beneficiary] = balanceOf[beneficiary].sub(_amount*DEC); // списали с бенефициара
+        tokenFrozenReferal[referal] = tokenFrozenReferal[referal].sub(_amount);
     }
 }
