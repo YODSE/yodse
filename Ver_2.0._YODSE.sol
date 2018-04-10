@@ -148,7 +148,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     // tokens for bounty programs
     uint256 constant bountyReserve = 3000000; //3 000 000
 
-    // variable counts the number of investors after call sell function.
+
     uint256 public investors;
 
     address team = 0xcc2fb3e7f4bc1b8948fa5163319cfe728dd1a471;
@@ -168,7 +168,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
 
     mapping (address => bool) public onChain;
     address[] public tokenHolders;
-    mapping(address => uint) public balances;
+
     mapping(address => uint) public tokenFrozenTeam;
     mapping(address => uint) public tokenFrozenReferal;
     mapping(address => uint) public tokenFrozenConsult;
@@ -176,8 +176,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
 
     uint256 public tokenNominal = 1000000000000000000; // 1 token = 1 USD
     uint public usdToEther = 400;
-    uint256 public etherBuyPrice = tokenNominal.div(usdToEther); //0,001 ether
-
+    uint256 public etherBuyPrice = tokenNominal.div(usdToEther);
 
     function YodseCrowdsale() public TokenERC20(100000000, "Your Open Direct Sales Ecosystem", "YODSE") {}
 
@@ -234,34 +233,29 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     function withDiscount(uint256 _amount, uint _percent) internal pure returns (uint256) {
         return ((_amount * _percent) / 100);
     }
-    // функция изменения даты окончания ICO собственником контракта
+
     function setEndData(uint newEndIcoDate) public onlyOwner {
         endIcoDate  = newEndIcoDate;
     }
-    // функция для отправки эфира с контракта
+
     function withdrawEthFromContract(address _to) public onlyOwner
     {
-        //require(weisRaised >= softCapMainSale); // проверка когда можно вывести эфир
+        require(weisRaised >= softCapMainSale); // проверка когда можно вывести эфир
         _to.transfer(weisRaised);
     }
-    // функция payable для отправки эфира на адрес
+
     function () isUnderHardCap public payable {
         require(now > startPreIcoDate && now < endIcoDate);
         sell(msg.sender, msg.value);
-        // проверка что отправляемые средства >= 0,001 ethereum
         assert(msg.value >= 1 ether / 1000);
-        //beneficiary.transfer(msg.value); // средства отправляюся на адрес бенефециара
-        // добавляем получаные средства в собранное
         weisRaised = weisRaised.add(msg.value);
-        // добавляем в адрес инвестора количество инвестированных эфиров
-        //balances[msg.sender] = balances[msg.sender].add(msg.value);
         investors  += 1;
         investedEther[msg.sender] = investedEther[msg.sender].add(msg.value);
     }
 
     function finalize() onlyOwner public {
-        //require(!isFinalized);
-        //require(now > endIcoDate || weisRaised >= hardCapMainISale);
+        require(!isFinalized);
+        require(now > endIcoDate || weisRaised >= hardCapMainISale);
         emit Finalized(msg.sender, now);
         burn(avaliableSupply);
         isFinalized = true;
