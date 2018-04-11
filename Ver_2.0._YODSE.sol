@@ -321,7 +321,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         // !!! referal - 10 000 000 после 1.1.2019
         require(tokenFrozenReferal[referal] > 0);
         _transfer(beneficiary, _refer, _amount*DEC);
-        balanceOf[beneficiary] = balanceOf[beneficiary].sub(_amount*DEC); // списали с бенефициара
-        tokenFrozenReferal[referal] = tokenFrozenReferal[referal].sub(_amount);
+        balanceOf[beneficiary] = balanceOf[beneficiary].sub(_amount*DEC);
+        tokenFrozenReferal[referal] = tokenFrozenReferal[referal].sub(_amount*DEC);
     }
 }
