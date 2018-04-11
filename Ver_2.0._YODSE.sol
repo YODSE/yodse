@@ -114,10 +114,10 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
     address beneficiary = 0x6a59cb8b2dfa32522902bbecf75659d54dd63f95;
 
-    uint public startPreIcoDate = now; // 04/15/2018 @ 1:00am (UTC)
-    uint public endPreIcoDate = 1525050000; // 04/30/2018 @ 1:00am (UTC)
-    uint public startIcoDate = 1526346000; // 05/15/2018 @ 1:00am (UTC)
-    uint public endIcoDate = 1529888400; // 06/25/2018 @ 1:00am (UTC)
+    uint public startPreIcoDate = now; // 04/23/2018 @ 00:01am (UTC) 1524441660
+    uint public endPreIcoDate = 1525651140; // 05/06/2018 @ 11:59pm (UTC)
+    uint public startIcoDate = 1526774460; // 05/20/2018 @ 12:01am (UTC)
+    uint public endIcoDate = 1532995140; // 07/30/2018 @ 11:59pm (UTC)
 
     // Supply for team and developers
     uint256 constant teamReserve = 15000000; //15 000 000
@@ -156,7 +156,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     mapping(address => uint256) public investedEther;
 
     uint256 public tokenNominal = 1000000000000000000;
-    uint public usdToEther = 400;
+    uint public usdToEther = 420;
     uint256 public etherBuyPrice = tokenNominal.div(usdToEther);
     uint256 public softcapPreSale = 1000000000000000000000000/usdToEther;
     uint256 public  hardCapPreIco = 3000000000000000000000000/usdToEther;
@@ -180,20 +180,25 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         // token discount PreIco (15 - 30 april  2018) 30%
         if (now > startPreIcoDate && now < endPreIcoDate) {
             _amount = _amount.add(withDiscount(_amount, 30));
-            // token discount ICO 15.05.2018 - 25.05.2018 - 20%
-        } else if (now > startIcoDate && now < startIcoDate + 864000) { // 864000 = 10 days
+
+            // token discount ICO 20.05.2018 - 31.05.2018 - 20%
+        } else if (now > startIcoDate && now < 1527811199) {
             _amount = _amount.add(withDiscount(_amount, 20));
-            // token discount ICO 25.05.2018 - 05.06.2018 - 15%
-        } else if (now >= startIcoDate + 864000 && now < startIcoDate + 1814400) {
+
+            // token discount ICO 1.06.2018 - 15.06.2018 - 15%
+        } else if (now >= 1527811200 && now < 1529107199) {
             _amount = _amount.add(withDiscount(_amount, 15));
-            // token discount ICO 05.06.2018 - 12.06.2018 - 10%
-        } else if (now >= startIcoDate + 1814400 && now < startIcoDate + 2419200) {
+
+            // token discount ICO 16.06.2018 - 30.06.2018 - 10%
+        } else if (now >= 1529107200 && now < 1530403199) {
             _amount = _amount.add(withDiscount(_amount, 10));
-            // token discount ICO 12.06.2018 - 17.06.2018 - 5%
-        } else if (now >= startIcoDate + 2419200 && now < startIcoDate + 2851200) {
+
+            // token discount ICO 1.07.2018 - 15.07.2018 - 5%
+        } else if (now >= 1530403199 && now < 1531699199) {
             _amount = _amount.add(withDiscount(_amount, 5));
-            // token discount ICO 17.06.2018 - 25.06.2018 - 3%
-        } else if (now >= startIcoDate + 2851200 && now < endIcoDate) {
+
+            // token discount ICO 16.07.2018 - 30.07.2018 - 3%
+        } else if (now >= 1531699200 && now < endIcoDate) {
             _amount = _amount.add(withDiscount(_amount, 3));
         } else {
             _amount = _amount.add(withDiscount(_amount, 0));
@@ -224,7 +229,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     function () isUnderHardCap public payable {
         require(now > startPreIcoDate && now < endIcoDate);
         sell(msg.sender, msg.value);
-        assert(msg.value >= 1 ether / 1000);
+        assert(msg.value >= 1 ether / usdToEther);
         weisRaised = weisRaised.add(msg.value);
         investors  += 1;
         investedEther[msg.sender] = investedEther[msg.sender].add(msg.value);
@@ -303,7 +308,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
             return;
         } else {
             emit newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
-            oraclize_query(43200, "URL", "json(https://min-api.cryptocompare.com/data/pricehistorical?fsym=ETH&tsyms=USD ).ETH.USD");
+            oraclize_query(86400, "URL", "json(https://min-api.cryptocompare.com/data/pricehistorical?fsym=ETH&tsyms=USD ).ETH.USD");
         }
     }
 
