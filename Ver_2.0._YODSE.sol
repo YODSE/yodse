@@ -1,8 +1,7 @@
-/* с 15.04.2018г. по 30.04.2018г.*/
 pragma solidity ^0.4.21;
 /*
 * @author Ivan Borisov (2622610@gmail.com) (Github.com/pillardevelopment)
-* @dev Source code hence -
+* @dev Source token's code hence -
 * https://github.com/PillarDevelopment/Barbarossa-Git/blob/master/contracts/BarbarossaInvestToken.sol
 */
 import "https://github.com/oraclize/ethereum-api/oraclizeAPI_0.5.sol";
@@ -19,9 +18,9 @@ library SafeMath {
     }
 
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        assert(b > 0); // Solidity automatically throws when dividing by 0
+        assert(b > 0);
         uint256 c = a / b;
-        assert(a == b * c + a % b); // There is no case in which this doesn't hold
+        assert(a == b * c + a % b);
         return c;
     }
 
@@ -96,16 +95,15 @@ contract TokenERC20 is Ownable {
     }
 
     function burn(uint256 _value) internal onlyOwner returns (bool success) {
-        require(balanceOf[this] >= _value);   // Check if the sender has enough
-        balanceOf[this] -= _value;            // Subtract from the sender
-        totalSupply -= _value;                      // Updates totalSupply
+        require(balanceOf[this] >= _value);
+        balanceOf[this] -= _value;
+        totalSupply -= _value;
         avaliableSupply -= _value;
         emit Burn(msg.sender, _value);
         return true;
     }
 }
 /*********************************************************************************************************************
-----------------------------------------------------------------------------------------------------------------------
 * @dev YodseCrowdsale contract
 */
 contract YodseCrowdsale is TokenERC20, usingOraclize {
@@ -114,7 +112,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     // address beneficiary 0x6a59CB8b2dfa32522902bbecf75659D54dD63F95
     address beneficiary = 0x6a59cb8b2dfa32522902bbecf75659d54dd63f95;
 
-    uint public startPreIcoDate = now; // 04/23/2018 @ 00:01am (UTC) 1524441660
+    uint public startPreIcoDate = 1524441660; // 04/23/2018 @ 00:01am (UTC) 1524441660
     uint public endPreIcoDate = 1525651140; // 05/06/2018 @ 11:59pm (UTC)
     uint public startIcoDate = 1526774460; // 05/20/2018 @ 12:01am (UTC)
     uint public endIcoDate = 1532995140; // 07/30/2018 @ 11:59pm (UTC)
@@ -170,14 +168,15 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         _;
     }
 
-    modifier holdersSupport() { //чьи заморож токены остались (team, consult, reserve, bounty)
-        require(msg.sender == team || msg.sender == referal || msg.sender == consult /*msg.sender==bounty*/);
+    modifier holdersSupport() {
+        require(msg.sender == team || msg.sender == referal || msg.sender == consult);
         _;
     }
 
     function sell(address _investor, uint256 amount) internal {
         uint256 _amount = amount.mul(DEC).div(etherBuyPrice);
-        // token discount PreIco (15 - 30 april  2018) 30%
+
+        // token discount PreIco  30%
         if (now > startPreIcoDate && now < endPreIcoDate) {
             _amount = _amount.add(withDiscount(_amount, 30));
 
@@ -200,6 +199,7 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
             // token discount ICO 16.07.2018 - 30.07.2018 - 3%
         } else if (now >= 1531699200 && now < endIcoDate) {
             _amount = _amount.add(withDiscount(_amount, 3));
+
         } else {
             _amount = _amount.add(withDiscount(_amount, 0));
         }
@@ -246,42 +246,41 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
 
     function distributionTokens() public onlyOwner {
         require(!distribute);
-        _transfer(this, beneficiary, 21500000*DEC); // frozen all
-        _transfer(this, team, 7500000*DEC); // immediately Team 1/2
+        _transfer(this, beneficiary, 21500000*DEC);
+        _transfer(this, team, 7500000*DEC);
         tokenFrozenTeam[team] = tokenFrozenTeam[team].add(7500000*DEC);
-        _transfer(this, consult, 2000000*DEC); // immediately advisers 1/3
-        tokenFrozenConsult[consult] = tokenFrozenConsult[consult].add(4000000*DEC); // в меппинг кладем 6 000 000 - 4 000 000
+        _transfer(this, consult, 2000000*DEC);
+        tokenFrozenConsult[consult] = tokenFrozenConsult[consult].add(4000000*DEC);
 
-        _transfer(this, marketing, marketingReserve*DEC); // immediately marketing all
+        _transfer(this, marketing, marketingReserve*DEC);
         _transfer(this, bounty, bountyReserve*DEC);
-        tokenFrozenReferal[referal] = tokenFrozenReferal[referal].add(10000000*DEC);  // immediately reserve all
+        tokenFrozenReferal[referal] = tokenFrozenReferal[referal].add(10000000*DEC);
         avaliableSupply -= 40000000*DEC;
         distribute = true;
     }
 
     function tokenTransferFromHolding(address) public  holdersSupport {
         require(now > endIcoDate);
-        // !!! team - 7 500 000 после 1.1.2020
-        if (msg.sender == team /* */ && now > 1577836801) { // 1577836801 - 01/01/2020 @ 12:00am (UTC)
-            require(tokenFrozenTeam[team] == 7500000*DEC);  // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
-            //tokenFrozenTeam[team] == 0;
-            _transfer(beneficiary, team, 7500000*DEC); // перевели еще токены
-            balanceOf[beneficiary] = balanceOf[beneficiary].sub(7500000*DEC); // списали с бенефициара
-            tokenFrozenTeam[team] = 0; // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
+
+        if (msg.sender == team && now > 1577836801) { // 1577836801 - 01/01/2020 @ 12:00am (UTC)
+            require(tokenFrozenTeam[team] == 7500000*DEC);
+            _transfer(beneficiary, team, 7500000*DEC);
+            balanceOf[beneficiary] = balanceOf[beneficiary].sub(7500000*DEC);
+            tokenFrozenTeam[team] = 0;
         }
-        // !!! consult - 2 000 000 после 1.9.2018
+
         else if (msg.sender == consult && now > 1535760001) { // 1535760001 - 09/01/2018 @ 12:00am (UTC)
-            require(tokenFrozenConsult[consult] == 4000000*DEC); // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
+            require(tokenFrozenConsult[consult] == 4000000*DEC);
             _transfer(beneficiary, consult, 2000000*DEC);
-            balanceOf[beneficiary] = balanceOf[beneficiary].sub(2000000*DEC); // списали с бенефициара
-            tokenFrozenConsult[consult] = tokenFrozenConsult[consult].sub(2000000*DEC); // списали с мепинга и уменьшили его до 2 000 000 чтобы прошел следующую проверку после  1.1.2019
+            balanceOf[beneficiary] = balanceOf[beneficiary].sub(2000000*DEC);
+            tokenFrozenConsult[consult] = tokenFrozenConsult[consult].sub(2000000*DEC);
         }
-        // и 2 000 000 после 1.1.2019
+
         else if (msg.sender == consult && now > 1546300801) { // 1546300801 -  01/01/2019 @ 12:00am (UTC)
-            require(tokenFrozenConsult[consult] == 2000000*DEC); // не может быть меньше так как даже если они выведут токены - на меппинг это не отразится
+            require(tokenFrozenConsult[consult] == 2000000*DEC);
             _transfer(beneficiary, consult, 2000000*DEC);
-            balanceOf[beneficiary] = balanceOf[beneficiary].sub(2000000*DEC); // списали с бенефициара
-            tokenFrozenConsult[consult] = 0; // списали с мепинга и сделали его == 0 чтобы второй раз не вывели
+            balanceOf[beneficiary] = balanceOf[beneficiary].sub(2000000*DEC);
+            tokenFrozenConsult[consult] = 0;
         }
     }
 
@@ -318,7 +317,6 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
     }
 
     function transferForReferer(address _refer, uint256 _amount) public onlyOwner {
-        // !!! referal - 10 000 000 после 1.1.2019
         require(tokenFrozenReferal[referal] > 0);
         _transfer(beneficiary, _refer, _amount*DEC);
         balanceOf[beneficiary] = balanceOf[beneficiary].sub(_amount*DEC);
