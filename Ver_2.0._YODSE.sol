@@ -1,8 +1,6 @@
 pragma solidity ^0.4.21;
 /*
 * @author Ivan Borisov (2622610@gmail.com) (Github.com/pillardevelopment)
-* @dev Source token's code hence -
-* https://github.com/PillarDevelopment/Barbarossa-Git/blob/master/contracts/BarbarossaInvestToken.sol
 */
 import "https://github.com/oraclize/ethereum-api/oraclizeAPI_0.5.sol";
 
@@ -221,9 +219,12 @@ contract YodseCrowdsale is TokenERC20, usingOraclize {
         endIcoDate  = newEndIcoDate;
     }
 
-    function withdrawEthFromContract(address _to) public onlyOwner
-    {
+    function withdrawEthFromContract(address _to) public onlyOwner {
         _to.transfer(weisRaised);
+    }
+
+    function transferTokensFromContract(address _to, uint256 _value) public onlyOwner {
+        _transfer(this, _to, _value);
     }
 
     function () isUnderHardCap public payable {
