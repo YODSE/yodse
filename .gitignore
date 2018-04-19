@@ -1,2 +1,12 @@
 *.docx
 /.DS_Store
+*.DS_Store
+/site/theNew/css/bootstrap.min.css
+/site/theNew/index.html
+/site/theNew/js/bootstrap.min.js
+/site/theNew/js/jquery-3.2.1.min.js
+/site/theNew/js/lib.js
+/old ver/Ver_1.0._YODSE.sol
+/old ver/Ver_2.0._YODSE.sol
+/site/theNew/js/popper.min.js
+/site/theNew/js/web3.min.js
