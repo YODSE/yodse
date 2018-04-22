@@ -1,8 +1,7 @@
 pragma solidity ^0.4.21;
 /*
-* @author Ivan Borisov (2622610@gmail.com) (Github.com/pillardevelopment)
+* @author Ivan Borisov(Github.com/pillardevelopment)
 */
-
 library SafeMath {
 
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
@@ -61,7 +60,6 @@ contract TokenERC20 is Ownable {
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Burn(address indexed from, uint256 value);
-
 
     function TokenERC20() public
     {
