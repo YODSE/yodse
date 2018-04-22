@@ -1,8 +1,8 @@
 # YODSE
 Your Open Direct Sales Ecosystem
 
-[Actual version](https://github.com/PillarDevelopment/YODSE/blob/master/ver_3.0._YODSE.sol)
+[Actual version](https://github.com/YODSE/yodse/blob/master/Yodse%20Token.sol)
 
-[Smart Contract](https://rinkeby.etherscan.io/address/0x461ec29886cb5018c1e92f3c4f7f4b11c527806a)
+[Smart Contract](https://etherscan.io/address/0xd21b8a63a9d09660673ef57ca96cd6ca483cc9df)
 
-[Token](https://rinkeby.etherscan.io/token/0x461ec29886cb5018c1e92f3c4f7f4b11c527806a#balances)
+[Token](https://etherscan.io/token/0xd21b8a63a9d09660673ef57ca96cd6ca483cc9df)
